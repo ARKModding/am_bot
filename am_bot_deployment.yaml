@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: am-bot
+  name: am-bot
+  namespace: arkmodding
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: am-bot
+  template:
+    metadata:
+      labels:
+        app: am-bot
+    spec:
+      containers:
+      - image: docker.home.jslay.net:5000/jslay/am_bot:3
+        imagePullPolicy: IfNotPresent
+        name: am-bot
+        env:
+          - name: BOT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: dmm-discord-member-manager
+                key: DISCORD_API_TOKEN
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: aws
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aws
+                key: AWS_SECRET_ACCESS_KEY
+          - name: AWS_DEFAULT_REGION
+            valueFrom:
+              secretKeyRef:
+                name: aws
+                key: AWS_DEFAULT_REGION
+      restartPolicy: Always

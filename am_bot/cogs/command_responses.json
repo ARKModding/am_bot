@@ -1,0 +1,39 @@
+{
+  "?": {
+    "wcws": {
+      "embed": {
+        "author": {
+          "name": "Zen Rowe",
+          "icon_url": "https://cdn.discordapp.com/avatars/153793036743213056/0b9daae46a39921aa8cde20e8bd3a10a.png",
+          "proxy_icon_url": "https://images-ext-1.discordapp.net/external/qILkpiDOCpJeFTNtap_jJR4-7jEDwfAwYSNCqlW8caI/https/cdn.discordapp.com/avatars/153793036743213056/0b9daae46a39921aa8cde20e8bd3a10a.png"
+        },
+        "fields": [
+          {
+            "name": "===============================",
+            "value": "` 1` [Getting Started](https://www.youtube.com/watch?v=Ap1szFuAKxY)\n` 2` [Data, Logic & Inheritance](https://www.youtube.com/watch?v=Sbup8LfpQ5A)\n` 3` [Building our First Mod](https://www.youtube.com/watch?v=c7YJh_sRiL4)\n` 4` [Replication Overview](https://www.youtube.com/watch?v=b5WfS0m8S4o)\n` 5` [Replication in Practice](https://www.youtube.com/watch?v=iSM6so6qbx8)\n` 6` [Config Options](https://www.youtube.com/watch?v=_VkmjvMNgVU)\n` 7` [Cooking with Zen](https://www.youtube.com/watch?v=wkQmWvBSxmk)\n` 8` [SaveGame Classes](https://www.youtube.com/watch?v=ExUCVXFPGhY)\n` 9` [MultiUse](https://www.youtube.com/watch?v=jfy1LVsoZls)\n`10` [User Interfaces](https://www.youtube.com/watch?v=EzbtZ6Ut9J8)\n`11` [Blueprint Interfaces](https://www.youtube.com/watch?v=naY7qRbsgL0)\n`12` [Class Default Objects](https://www.youtube.com/watch?v=8ii51IIOdes)",
+            "inline": true
+          },
+          {
+            "name": "===============================",
+            "value": "`13` [Event Dispatchers](https://www.youtube.com/watch?v=RlZ1DMbI4RM)\n`14` [Version Control](https://www.youtube.com/watch?v=uTNbciO6aMQ)\n`15` [Bitmasks](https://www.youtube.com/watch?v=HCM5uIFkpmg)\n`16` [VSS - Design Document](https://www.youtube.com/watch?v=rdwncwGgSbg)\n`17` [VSS - Setup](https://www.youtube.com/watch?v=DjQDAIu0WqM)\n`18` [VSS - Structure Basics](https://www.youtube.com/watch?v=LQBHB4FVfRE)\n`19` [VSS - Virtualization Process](https://www.youtube.com/watch?v=4Z99VYpN59o)\n`20` [VSS - UnVirtualization Process](https://www.youtube.com/watch?v=tMlmWXG4XDk)\n`21` [VSS - Transition Material](https://www.youtube.com/watch?v=2DIg8KKzy_o)\n`22` [VSS - Transition Material Timeline](https://www.youtube.com/watch?v=77gBfAQOJ-8)\n`23` [VSS - Targeting List](https://www.youtube.com/watch?v=eh1rxZ1gv8A)\n`24` [VSS - Targeting Implementation](https://www.youtube.com/watch?v=W1oQ8WqxLxk)",
+            "inline": true
+          }
+        ],
+        "color": 2921542,
+        "type": "rich",
+        "description": "A series of videos by Studio Wildcard Modding Community Manager **Zen Rowe**, ranging from the fundamental and basic knowledge required when working in the ARK Editor, through to more advanced concepts and tools.",
+        "url": "https://www.youtube.com/playlist?list=PL2o1TY9xh_JsmbgQfSCydfT-7OSdvxsVR",
+        "title": "Wildcard Workshop"
+      }
+    },
+    "gso": {
+      "content": "__**SAH Discord**__: https://discord.gg/h2k7agJJGS"
+    },
+    "sah": {
+      "duplicate": "gso"
+    },
+    "ngm": {
+      "content": "<https://github.com/Kozenomenon/MoreBetterGenericMod/releases/download/release1/GenericMod.zip>"
+    }
+  }
+}
