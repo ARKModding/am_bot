@@ -8,7 +8,6 @@ from .cogs.invite_response import InviteResponseCog
 from .cogs.responses import ResponsesCog
 from .cogs.role_assignment import RoleAssignmentCog
 from .cogs.server_stats import ServerStatsCog
-from .cogs.starboard import StarboardCog
 from .cogs.workshop import WorkshopCog
 
 
@@ -25,7 +24,6 @@ class ARKBot(Bot):
         self.add_cog(ResponsesCog(self))
         self.add_cog(RoleAssignmentCog(self))
         self.add_cog(ServerStatsCog(self))
-        self.add_cog(StarboardCog(self))
         self.add_cog(WorkshopCog(self))
 
     async def on_ready(self):
