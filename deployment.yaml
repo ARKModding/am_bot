@@ -17,7 +17,7 @@ spec:
         app: am-bot
     spec:
       containers:
-      - image: docker.home.jslay.net:5000/jslay/am_bot:3
+      - image: "ghcr.io/ARKModding/am_bot:latest"
         imagePullPolicy: IfNotPresent
         name: am-bot
         env:

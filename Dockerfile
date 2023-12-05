@@ -1,10 +1,23 @@
-FROM python:3-alpine as base
-WORKDIR /app
-RUN apk update --no-cache && apk add --no-cache gcc musl-dev
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+FROM python:alpine AS base
 
-FROM base
-COPY run.py run.py
-COPY am_bot am_bot
-ENTRYPOINT ["python", "run.py"]
+RUN apk update && apk upgrade
+
+
+FROM base AS deps
+
+COPY requirements.txt /tmp/
+RUN apk add gcc musl-dev && mkdir /build && pip install --prefix /build -r /tmp/requirements.txt
+
+
+FROM base AS final
+ENV PYTHONPATH /am_bot
+WORKDIR /am_bot
+
+RUN adduser -D app
+COPY --chown=app:app . .
+COPY --from=deps /build /usr/local
+
+USER app
+
+ENTRYPOINT ["./entrypoint.sh"]
+CMD ["run.py"]
