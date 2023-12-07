@@ -14,6 +14,7 @@ from .cogs.workshop import WorkshopCog
 logger = logging.getLogger(__name__)
 intents = discord.Intents.default()
 intents.members = True
+intents.message_content = True
 
 
 class ARKBot(Bot):
