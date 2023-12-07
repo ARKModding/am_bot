@@ -17,7 +17,7 @@ spec:
         app: am-bot
     spec:
       containers:
-      - image: "ghcr.io/ARKModding/am_bot:latest"
+      - image: "ghcr.io/arkmodding/am_bot:latest"
         imagePullPolicy: IfNotPresent
         name: am-bot
         env:
