@@ -26,6 +26,29 @@
         "title": "Wildcard Workshop"
       }
     },
+    "amcv": {
+      "embed": {
+        "author": {
+          "name": "Ark Modding Community Tutorials",
+          "icon_url": "https://i.imgur.com/VETB8oS.png",
+          "proxy_icon_url": "https://images-ext-1.discordapp.net/external/qILkpiDOCpJeFTNtap_jJR4-7jEDwfAwYSNCqlW8caI/https/cdn.discordapp.com/avatars/153793036743213056/0b9daae46a39921aa8cde20e8bd3a10a.png"
+        },
+        "fields": [
+          {
+            "name": "===========================",
+            "value": "[ButtMan](https://www.youtube.com/@buttman5661)\n[CurseForge/Garuga](https://www.youtube.com/playlist?list=PLlBDf-OWU0msiRB9tM9d1Z7jOxrcnLq8J)\n[Exilog](https://www.youtube.com/@TheExilog/playlists)\n[Jeremy Stieglitz](https://www.youtube.com/@jeremystieglitz5528/videos)\n[Mist3r Trixt3r](https://www.youtube.com/@mist3rtrixt3r/videos)\n[Quellcrest](https://www.youtube.com/playlist?list=PL1Y2jYw9FPHvG1MWEvgMOFxSqffgKO3z-)\n[SlayerXTremeTV](https://www.youtube.com/playlist?list=PLWSYGDmly0DGdLBdzUYSKl237-G5cTVJU)\n[Temptress Lagoon](https://www.youtube.com/playlist?list=PLtDNOmdIBLvniS-KYOQIlr3OiLu5ZzpXR)\n[Wildcard Workshop](https://www.youtube.com/playlist?list=PLqEbPL51Hb38AcD6-KgtMhNPvLXjKxc2Y)\n[WM Plays](https://www.youtube.com/playlist?list=PLUBrBJbOcbhdAzUVvo_uk8ss_2p5JU6V-)",
+            "inline": true
+          }
+        ],
+        "color": 2921542,
+        "type": "rich",
+        "description": "Links to Ark Modding Community member's YouTube channels, including a wide assortment of tutorials. From Mapping, to Dinos and everything in between.",
+        "title": ""
+      }
+    },
+    "amcvids": {
+      "duplicate": "amcv"
+    },
     "gso": {
       "content": "__**SAH Discord**__: https://discord.gg/h2k7agJJGS"
     },
