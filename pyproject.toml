@@ -6,7 +6,7 @@ name = "am_bot"
 authors = [
     {name = "ARKModding", email = "no-reply@arkmodding.net"},
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 readme = "README.md"
 classifiers = []
 dynamic = [
@@ -40,21 +40,24 @@ exclude_dirs = [
 
 [tool.black]
 line-length = 79
-target-version = ['py312']
+target-version = ['py313']
 include = '\.pyi?$'
 
 [tool.isort]
 profile = "black"
 line_length = 79
 lines_after_imports = 2
-skip = [".tox", "venv"]
+skip = [".tox", "venv", ".venv"]
 
 [tool.ruff]
 exclude = [
     "venv",
+    ".venv",
     "__init__.py",
 ]
 line-length = 79
+
+[tool.ruff.lint]
 select = [
     "B",
     "C",

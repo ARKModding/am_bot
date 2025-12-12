@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2.10.2
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
@@ -20,10 +20,10 @@ jobs:
               - 'tox.ini'
 
       - name: Setup Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v5
         if: steps.filter.outputs.python == 'true'
         with:
-          python-version: "3.12"
+          python-version: "3.13"
 
       - name: Install Dependencies
         if: steps.filter.outputs.python == 'true'
@@ -44,17 +44,14 @@ jobs:
     strategy:
       matrix:
         toxenv:
-          - py311-unittest
-          - py312-unittest
+          - py313-unittest
         include:
-          - toxenv: py311-unittest
-            python-version: "3.11"
-          - toxenv: py312-unittest
-            python-version: "3.12"
+          - toxenv: py313-unittest
+            python-version: "3.13"
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2.10.2
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
@@ -63,7 +60,7 @@ jobs:
               - 'tox.ini'
 
       - name: Set up Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v5
         if: steps.filter.outputs.python == 'true'
         with:
           python-version: "${{ matrix.python-version }}"
@@ -80,13 +77,13 @@ jobs:
           tox -e ${{ matrix.toxenv }}
 
       - name: Dump Test Coverage
-        if: steps.filter.outputs.python == 'true' && matrix.toxenv == 'py312-unittest'
+        if: steps.filter.outputs.python == 'true' && matrix.toxenv == 'py313-unittest'
         run: |
           pip install coverage
           coverage xml
 
       - name: Store Test Coverage
-        if: steps.filter.outputs.python == 'true' && matrix.toxenv == 'py312-unittest'
+        if: steps.filter.outputs.python == 'true' && matrix.toxenv == 'py313-unittest'
         uses: actions/upload-artifact@v4
         with:
           name: coverage
@@ -101,10 +98,10 @@ jobs:
       - unittest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: dorny/paths-filter@v2.10.2
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
@@ -113,10 +110,10 @@ jobs:
               - 'tox.ini'
 
       - name: Setup Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v5
         if: steps.filter.outputs.python == 'true'
         with:
-          python-version: "3.12"
+          python-version: "3.13"
 
       - name: Install Coverage & diff_cover
         if: steps.filter.outputs.python == 'true'

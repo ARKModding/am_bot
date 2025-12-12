@@ -110,9 +110,11 @@ class StarboardCog(commands.Cog):
                     "inline": False,
                 }
             ],
-            "color": 3375061
-            if self._last_message.embeds[0].color == 16769024
-            else 16769024,
+            "color": (
+                3375061
+                if self._last_message.embeds[0].color == 16769024
+                else 16769024
+            ),
             "timestamp": datetime.utcnow()
             .replace(tzinfo=timezone.utc)
             .isoformat(),
