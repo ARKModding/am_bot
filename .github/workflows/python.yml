@@ -126,7 +126,7 @@ jobs:
         run: |
           coverage report
 
-#      - name: Check Coverage Diff
-#        if: steps.filter.outputs.python == 'true'
-#        run: |
-#          diff-cover ./coverage.xml --compare-branch=origin/main --fail-under=100
+      - name: Coverage Diff
+        if: steps.filter.outputs.python == 'true'
+        run: |
+          diff-cover coverage.xml --compare-branch=origin/main || true

@@ -66,6 +66,9 @@ select = [
     "W",
 ]
 
+[tool.coverage.run]
+relative_files = true
+
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 description = {file = ["README.md"]}
