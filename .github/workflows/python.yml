@@ -76,12 +76,6 @@ jobs:
         run: |
           tox -e ${{ matrix.toxenv }}
 
-      - name: Dump Test Coverage
-        if: steps.filter.outputs.python == 'true' && matrix.toxenv == 'py313-unittest'
-        run: |
-          pip install coverage
-          coverage xml
-
       - name: Store Test Coverage
         if: steps.filter.outputs.python == 'true' && matrix.toxenv == 'py313-unittest'
         uses: actions/upload-artifact@v4
