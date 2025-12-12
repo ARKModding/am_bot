@@ -15,6 +15,17 @@ class InviteResponseCog(commands.Cog):
     def __init__(self, bot: discord.ext.commands.Bot):
         self.bot = bot
 
+    def _parse_embed_email(self, embed: discord.Embed) -> str | None:
+        """Extract email from an embed's Email field."""
+        for field in embed.fields:
+            if field.name == "Email":
+                # Email is wrapped in backticks: `email@example.com`
+                match = re.match(r"`(.+)`", field.value)
+                if match:
+                    return match.group(1)
+                return field.value
+        return None
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         logger.debug("Message Received")
@@ -41,13 +52,33 @@ class InviteResponseCog(commands.Cog):
             )
         )
 
-        logger.warning(referenced.content)
-        email_pattern = re.compile(r"Email: (.*)")
-        match = email_pattern.match(referenced.content)
-        if not match:
+        # Parse email and help request from embed (new format)
+        email = None
+        help_request = None
+
+        if referenced.embeds:
+            embed = referenced.embeds[0]
+            email = self._parse_embed_email(embed)
+            help_request = embed.description
+            logger.debug(f"Parsed from embed - Email: {email}")
+        else:
+            # Fallback to legacy plain text format
+            logger.warning(referenced.content)
+            email_pattern = re.compile(r"Email: (.*)")
+            match = email_pattern.match(referenced.content)
+            if match:
+                email = match.group(1)
+            help_request = "\n".join(referenced.content.split("\n")[7:])
+
+        if not email:
             logger.debug("Email not found in referenced message.")
-        logger.debug(f"Email found for referenced message: {match.group(1)}")
-        help_request = "\n".join(referenced.content.split("\n")[7:])
+            return
+
+        if not help_request:
+            logger.debug("Help request not found in referenced message.")
+            return
+
+        logger.debug(f"Email found for referenced message: {email}")
         body_txt = (
             f"Your Message: {help_request}\n\n"
             f"ARK Modding Discord Staff Response:\n\n"
@@ -88,7 +119,7 @@ class InviteResponseCog(commands.Cog):
         </html>
         """
         send_email(
-            match.group(1),
+            email,
             subject="ARK Modding Discord Staff Response",
             body_txt=body_txt,
             body_html=body_html,
