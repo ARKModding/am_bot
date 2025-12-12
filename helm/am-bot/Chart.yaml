@@ -1,0 +1,10 @@
+apiVersion: v2
+name: am-bot
+description: ARK Modding Discord Bot - Community management bot for ARK modding Discord server
+type: application
+version: 1.0.0
+appVersion: "0.0.6"
+
+maintainers:
+  - name: jslay
+    email: jslay@arkmodding.net
