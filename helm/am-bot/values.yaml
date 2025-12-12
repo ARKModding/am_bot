@@ -1,0 +1,53 @@
+# Default values for am-bot
+
+replicaCount: 1
+
+image:
+  registry: ghcr.io
+  repository: arkmodding/am_bot
+  tag: "0.0.6"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+# Use an existing secret for credentials
+# The secret must contain: BOT_TOKEN
+# If AWS SES is enabled, also needs: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION
+existingSecret: ""
+
+# If not using existingSecret, provide secrets here (not recommended for production)
+secrets: {}
+  # BOT_TOKEN: ""
+
+# AWS SES configuration for email notifications
+aws:
+  enabled: true
+  # Use a separate existing secret for AWS credentials
+  # Must contain: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION
+  existingSecret: ""
+  # If not using existingSecret, provide values here
+  secrets: {}
+    # AWS_ACCESS_KEY_ID: ""
+    # AWS_SECRET_ACCESS_KEY: ""
+    # AWS_DEFAULT_REGION: ""
+
+# Additional environment variables
+env: {}
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+podAnnotations: {}
+
+serviceAccount:
+  create: false
+  name: ""
