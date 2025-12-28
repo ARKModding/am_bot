@@ -139,7 +139,19 @@ jobs:
       - name: Overall Coverage
         if: steps.filter.outputs.python == 'true'
         run: |
-          coverage report --fail-under=90
+          # Use coverage.xml since .coverage has absolute paths from the test runner
+          python -c "
+          import xml.etree.ElementTree as ET
+          tree = ET.parse('coverage.xml')
+          root = tree.getroot()
+          line_rate = float(root.get('line-rate', 0))
+          coverage_pct = line_rate * 100
+          print(f'Total Coverage: {coverage_pct:.1f}%')
+          if coverage_pct < 90:
+              print(f'ERROR: Coverage {coverage_pct:.1f}% is below 90% threshold')
+              exit(1)
+          print('Coverage threshold met!')
+          "
 
       - name: Coverage Diff
         if: steps.filter.outputs.python == 'true'

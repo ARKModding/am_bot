@@ -448,8 +448,9 @@ class TestQuarantineCog:
     async def test_handle_quarantine_clears_user_history(self, cog):
         """Test that quarantine clears the user's message history."""
         with patch("am_bot.cogs.quarantine.QUARANTINE_ROLE_ID", 98765):
-            from am_bot.cogs.quarantine import MessageRecord
             from datetime import datetime, timezone
+
+            from am_bot.cogs.quarantine import MessageRecord
 
             member = make_mock_member(user_id=12345)
             guild = make_mock_guild()

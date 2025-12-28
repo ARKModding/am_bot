@@ -2,8 +2,7 @@
 
 from unittest.mock import MagicMock, patch
 
-
-from am_bot.ses import send_email, SENDER, AWS_REGION
+from am_bot.ses import AWS_REGION, SENDER, send_email
 
 
 class TestSendEmail:
