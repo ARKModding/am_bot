@@ -18,6 +18,8 @@ jobs:
             python:
               - '**.py'
               - 'tox.ini'
+              - 'pyproject.toml'
+              - 'tests/**'
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -58,6 +60,8 @@ jobs:
             python:
               - '**.py'
               - 'tox.ini'
+              - 'pyproject.toml'
+              - 'tests/**'
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -85,6 +89,15 @@ jobs:
             ./.coverage
             ./coverage.xml
 
+      - name: Upload Coverage to Codecov
+        if: steps.filter.outputs.python == 'true' && matrix.toxenv == 'py313-unittest'
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true
+        continue-on-error: true
+
   coverage:
     runs-on: ubuntu-latest
     name: Coverage
@@ -102,6 +115,8 @@ jobs:
             python:
               - '**.py'
               - 'tox.ini'
+              - 'pyproject.toml'
+              - 'tests/**'
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -124,7 +139,7 @@ jobs:
       - name: Overall Coverage
         if: steps.filter.outputs.python == 'true'
         run: |
-          coverage report
+          coverage report --fail-under=90
 
       - name: Coverage Diff
         if: steps.filter.outputs.python == 'true'

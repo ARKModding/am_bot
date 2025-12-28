@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools ~=65.5"]
+requires = ["setuptools>=70.0"]
 
 [project]
 name = "am_bot"
@@ -23,7 +23,9 @@ dev = [
     "diff-cover",
     "isort",
     "pre-commit",
-    "pytest>=2.7.3",
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.0.0",
     "ruff",
 ]
 test = [
@@ -66,8 +68,30 @@ select = [
     "W",
 ]
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
 [tool.coverage.run]
 relative_files = true
+source = ["am_bot"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+show_missing = true
+
+[tool.setuptools]
+packages = ["am_bot", "am_bot.cogs"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
