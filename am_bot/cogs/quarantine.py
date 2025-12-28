@@ -115,7 +115,7 @@ class QuarantineCog(commands.Cog):
             ]
 
     def _get_similarity(self, text1: str, text2: str) -> float:
-        """Calculate similarity ratio between two strings (expects lowercase)."""
+        """Calculate similarity ratio between two lowercase strings."""
         return SequenceMatcher(None, text1, text2).ratio()
 
     def _detect_cross_channel_spam(
