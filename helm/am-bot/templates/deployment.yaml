@@ -65,6 +65,35 @@ spec:
             - name: QUARANTINE_ROLE_ID
               value: {{ .Values.quarantine.roleId | quote }}
             {{- end }}
+            {{- /* Spam detection configuration */}}
+            {{- if .Values.spamDetection.similarityThreshold }}
+            - name: SPAM_SIMILARITY_THRESHOLD
+              value: {{ .Values.spamDetection.similarityThreshold | quote }}
+            {{- end }}
+            {{- if .Values.spamDetection.channelThreshold }}
+            - name: SPAM_CHANNEL_THRESHOLD
+              value: {{ .Values.spamDetection.channelThreshold | quote }}
+            {{- end }}
+            {{- if .Values.spamDetection.historySeconds }}
+            - name: MESSAGE_HISTORY_SECONDS
+              value: {{ .Values.spamDetection.historySeconds | quote }}
+            {{- end }}
+            {{- if .Values.spamDetection.minMessageLength }}
+            - name: SPAM_MIN_MESSAGE_LENGTH
+              value: {{ .Values.spamDetection.minMessageLength | quote }}
+            {{- end }}
+            {{- if .Values.spamDetection.maxMessagesPerUser }}
+            - name: SPAM_MAX_MESSAGES_PER_USER
+              value: {{ .Values.spamDetection.maxMessagesPerUser | quote }}
+            {{- end }}
+            {{- if .Values.spamDetection.maxContentLength }}
+            - name: SPAM_MAX_CONTENT_LENGTH
+              value: {{ .Values.spamDetection.maxContentLength | quote }}
+            {{- end }}
+            {{- if .Values.spamDetection.cleanupInterval }}
+            - name: CLEANUP_INTERVAL_SECONDS
+              value: {{ .Values.spamDetection.cleanupInterval | quote }}
+            {{- end }}
             {{- /* Additional environment variables */}}
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}

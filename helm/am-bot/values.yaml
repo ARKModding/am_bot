@@ -39,6 +39,23 @@ quarantine:
   # Role ID to assign to users who trigger the honeypot
   roleId: ""
 
+# Spam detection configuration
+spamDetection:
+  # Similarity threshold (0.0-1.0) for detecting duplicate messages
+  similarityThreshold: "0.85"
+  # Number of channels with similar messages to trigger quarantine
+  channelThreshold: "3"
+  # Message history retention in seconds (default 1 hour)
+  historySeconds: "3600"
+  # Minimum message length to check for spam (shorter messages are ignored)
+  minMessageLength: "20"
+  # Maximum messages stored per user (memory protection)
+  maxMessagesPerUser: "50"
+  # Maximum content length stored per message (truncates longer messages)
+  maxContentLength: "200"
+  # Interval for periodic cleanup of all users (seconds)
+  cleanupInterval: "300"
+
 # Additional environment variables
 env: {}
 
