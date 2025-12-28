@@ -150,7 +150,11 @@ class QuarantineCog(commands.Cog):
                 continue
 
             # Quick length check - very different lengths can't be similar
-            len_ratio = len(content_lower) / len(record.content) if record.content else 0
+            len_ratio = (
+                len(content_lower) / len(record.content)
+                if record.content
+                else 0
+            )
             if len_ratio < 0.5 or len_ratio > 2.0:
                 continue
 
