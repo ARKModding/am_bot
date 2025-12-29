@@ -44,4 +44,3 @@ class ResponsesCog(commands.Cog):
                 )
             elif "content" in command:
                 await message.channel.send(content=command["content"])
-

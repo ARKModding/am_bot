@@ -116,4 +116,3 @@ class StarboardCog(commands.Cog):
         logger.info(
             f"New starboard entry: message {message.id} by {message.author}"
         )
-

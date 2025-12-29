@@ -61,7 +61,10 @@ class ServerStatsCog(commands.Cog):
         mapper_count = len(mapper_role.members)
         await mapper_channel.edit(name=f"🔹┇{mapper_count}︲mappers")
 
-        logger.info(f"Updated role counts: {modder_count} modders, {mapper_count} mappers")
+        logger.info(
+            f"Updated role counts: {modder_count} modders, "
+            f"{mapper_count} mappers"
+        )
 
     async def update_server_stats(self):
         await asyncio.sleep(60)
@@ -71,4 +74,3 @@ class ServerStatsCog(commands.Cog):
         while True:
             await self.update_boost_count()
             await asyncio.sleep(600)
-

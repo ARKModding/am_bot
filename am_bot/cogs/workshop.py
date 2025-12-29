@@ -58,4 +58,3 @@ class WorkshopCog(commands.Cog):
             purge_time = datetime.utcnow() - timedelta(days=1)
             await channel.purge(before=purge_time)
             await asyncio.sleep(600)
-

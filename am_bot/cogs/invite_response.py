@@ -67,7 +67,10 @@ class InviteResponseCog(commands.Cog):
             help_request = "\n".join(referenced.content.split("\n")[7:])
 
         if not email or not help_request:
-            logger.debug(f"Could not parse email/help request from message {referenced.id}")
+            logger.debug(
+                f"Could not parse email/help request from message "
+                f"{referenced.id}"
+            )
             return
 
         logger.info(f"Sending invite help response to {email}")

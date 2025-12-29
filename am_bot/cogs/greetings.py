@@ -27,4 +27,3 @@ class GreetingsCog(commands.Cog):
         else:
             await ctx.send(f"Hello {member.name}... This feels familiar.")
         self._last_member = member
-

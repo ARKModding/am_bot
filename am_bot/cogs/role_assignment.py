@@ -100,4 +100,3 @@ class RoleAssignmentCog(commands.Cog):
                 f"{len(cleared_messages)} messages"
             )
             await asyncio.sleep(600)
-
