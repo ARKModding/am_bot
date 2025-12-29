@@ -7,15 +7,17 @@ from datetime import datetime, timedelta, timezone
 from difflib import SequenceMatcher
 
 import discord
+from discord import app_commands
 from discord.ext import commands
+
+from am_bot.constants import (
+    QUARANTINE_HONEYPOT_CHANNEL_ID,
+    QUARANTINE_ROLE_ID,
+    STAFF_ROLE_ID,
+)
 
 
 logger = logging.getLogger(__name__)
-
-QUARANTINE_HONEYPOT_CHANNEL_ID = int(
-    os.getenv("QUARANTINE_HONEYPOT_CHANNEL_ID", 0)
-)
-QUARANTINE_ROLE_ID = int(os.getenv("QUARANTINE_ROLE_ID", 0))
 
 # Spam detection configuration
 # Minimum similarity ratio (0.0 to 1.0) to consider messages as duplicates
@@ -307,3 +309,87 @@ class QuarantineCog(commands.Cog):
 
         # Record the message for future spam detection
         self._record_message(message)
+
+    def _is_staff(self, member: discord.Member) -> bool:
+        """Check if a member has the staff role."""
+        if STAFF_ROLE_ID == 0:
+            return False
+        return any(role.id == STAFF_ROLE_ID for role in member.roles)
+
+    @app_commands.command(
+        name="quarantine",
+        description="Quarantine a user and purge their recent messages",
+    )
+    @app_commands.describe(
+        member="The member to quarantine", reason="Reason for the quarantine"
+    )
+    @app_commands.default_permissions(manage_roles=True)
+    async def quarantine_command(
+        self,
+        interaction: discord.Interaction,
+        member: discord.Member,
+        reason: str | None = None,
+    ) -> None:
+        """Slash command for staff to manually quarantine a user."""
+        # Check if user has staff role
+        if not self._is_staff(interaction.user):
+            await interaction.response.send_message(
+                "You must be staff to use this command.", ephemeral=True
+            )
+            return
+
+        reason = reason or "Manual quarantine by staff"
+        full_reason = f"{reason} (by {interaction.user})"
+
+        # Don't allow quarantining bots
+        if member.bot:
+            await interaction.response.send_message(
+                "Cannot quarantine bots.", ephemeral=True
+            )
+            return
+
+        # Don't allow self-quarantine
+        if member.id == interaction.user.id:
+            await interaction.response.send_message(
+                "You cannot quarantine yourself.", ephemeral=True
+            )
+            return
+
+        # Defer the response since purging may take time
+        await interaction.response.defer(ephemeral=True)
+
+        logger.info(
+            f"Manual quarantine initiated for {member} ({member.id}) "
+            f"by {interaction.user} ({interaction.user.id}): {reason}"
+        )
+
+        success = await self._assign_quarantine_role(
+            member, interaction.guild, full_reason
+        )
+
+        if not success:
+            await interaction.followup.send(
+                "Failed to assign quarantine role. Check bot permissions.",
+                ephemeral=True,
+            )
+            return
+
+        deleted_count = await self._purge_member_messages(
+            member, interaction.guild
+        )
+
+        # Clear their message history from memory
+        if member.id in self.message_history:
+            del self.message_history[member.id]
+
+        logger.info(
+            f"Manual quarantine complete for {member} ({member.id}). "
+            f"Deleted {deleted_count} messages from the last hour."
+        )
+
+        await interaction.followup.send(
+            f"✅ Quarantined {member.mention}.\n"
+            f"Deleted {deleted_count} messages from the last hour.\n"
+            f"Reason: {reason}",
+            ephemeral=True,
+        )

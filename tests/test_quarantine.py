@@ -12,6 +12,7 @@ from tests.conftest import (
     make_mock_guild,
     make_mock_member,
     make_mock_message,
+    make_mock_role,
 )
 
 
@@ -22,8 +23,6 @@ def setup_env():
     with patch.dict(
         os.environ,
         {
-            "QUARANTINE_HONEYPOT_CHANNEL_ID": "123456789",
-            "QUARANTINE_ROLE_ID": "987654321",
             "SPAM_SIMILARITY_THRESHOLD": "0.85",
             "SPAM_CHANNEL_THRESHOLD": "3",
             "MESSAGE_HISTORY_SECONDS": "3600",
@@ -563,3 +562,250 @@ class TestQuarantineCog:
 
             # Message should be deleted (quarantine triggered)
             message.delete.assert_called_once()
+
+
+class TestQuarantineSlashCommand:
+    """Tests for the /quarantine slash command."""
+
+    @pytest.fixture
+    def cog(self):
+        """Create a QuarantineCog instance with mocked bot."""
+        from am_bot.cogs.quarantine import QuarantineCog
+
+        bot = make_mock_bot()
+        return QuarantineCog(bot)
+
+    @pytest.fixture
+    def staff_role(self):
+        """Create a mock staff role."""
+        return make_mock_role(role_id=322496447687819264, name="Staff")
+
+    @pytest.fixture
+    def mock_interaction(self, staff_role):
+        """Create a mock Discord interaction with a staff user."""
+        from unittest.mock import AsyncMock
+
+        interaction = MagicMock()
+        interaction.user = make_mock_member(
+            user_id=11111, name="StaffUser", roles=[staff_role]
+        )
+        interaction.guild = make_mock_guild()
+        interaction.response = MagicMock()
+        interaction.response.send_message = AsyncMock()
+        interaction.response.defer = AsyncMock()
+        interaction.followup = MagicMock()
+        interaction.followup.send = AsyncMock()
+        return interaction
+
+    def test_is_staff_returns_true_for_staff_member(self, cog, staff_role):
+        """Test _is_staff returns True when member has staff role."""
+        with patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 322496447687819264):
+            member = make_mock_member(roles=[staff_role])
+            assert cog._is_staff(member) is True
+
+    def test_is_staff_returns_false_for_non_staff(self, cog):
+        """Test _is_staff returns False when member lacks staff role."""
+        with patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 322496447687819264):
+            other_role = make_mock_role(role_id=999999, name="Other")
+            member = make_mock_member(roles=[other_role])
+            assert cog._is_staff(member) is False
+
+    def test_is_staff_returns_false_when_not_configured(self, cog, staff_role):
+        """Test _is_staff returns False when STAFF_ROLE_ID is 0."""
+        with patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 0):
+            member = make_mock_member(roles=[staff_role])
+            assert cog._is_staff(member) is False
+
+    @pytest.mark.asyncio
+    async def test_quarantine_command_rejects_non_staff(self, cog):
+        """Test command rejects users without staff role."""
+        from unittest.mock import AsyncMock
+
+        with patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 322496447687819264):
+            interaction = MagicMock()
+            interaction.user = make_mock_member(user_id=11111, roles=[])
+            interaction.response = MagicMock()
+            interaction.response.send_message = AsyncMock()
+
+            target = make_mock_member(user_id=22222)
+
+            await cog.quarantine_command.callback(
+                cog, interaction, target, None
+            )
+
+            interaction.response.send_message.assert_called_once()
+            call_args = interaction.response.send_message.call_args
+            assert "must be staff" in call_args[0][0]
+            assert call_args[1]["ephemeral"] is True
+
+    @pytest.mark.asyncio
+    async def test_quarantine_command_rejects_bots(
+        self, cog, mock_interaction
+    ):
+        """Test that the command rejects attempts to quarantine bots."""
+        with patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 322496447687819264):
+            target = make_mock_member(user_id=22222, bot=True)
+
+            await cog.quarantine_command.callback(
+                cog, mock_interaction, target, None
+            )
+
+            mock_interaction.response.send_message.assert_called_once()
+            call_args = mock_interaction.response.send_message.call_args
+            assert "Cannot quarantine bots" in call_args[0][0]
+            assert call_args[1]["ephemeral"] is True
+
+    @pytest.mark.asyncio
+    async def test_quarantine_command_rejects_self(
+        self, cog, mock_interaction
+    ):
+        """Test that the command rejects self-quarantine."""
+        with patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 322496447687819264):
+            # Target is the same as the invoker
+            target = make_mock_member(user_id=11111, name="StaffUser")
+            mock_interaction.user.id = 11111
+
+            await cog.quarantine_command.callback(
+                cog, mock_interaction, target, None
+            )
+
+            mock_interaction.response.send_message.assert_called_once()
+            call_args = mock_interaction.response.send_message.call_args
+            assert "cannot quarantine yourself" in call_args[0][0]
+            assert call_args[1]["ephemeral"] is True
+
+    @pytest.mark.asyncio
+    async def test_quarantine_command_fails_without_role(
+        self, cog, mock_interaction
+    ):
+        """Test command handles missing quarantine role."""
+        with (
+            patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 322496447687819264),
+            patch("am_bot.cogs.quarantine.QUARANTINE_ROLE_ID", 0),
+        ):
+            target = make_mock_member(user_id=22222)
+
+            await cog.quarantine_command.callback(
+                cog, mock_interaction, target, None
+            )
+
+            mock_interaction.response.defer.assert_called_once()
+            mock_interaction.followup.send.assert_called_once()
+            call_args = mock_interaction.followup.send.call_args
+            assert "Failed to assign quarantine role" in call_args[0][0]
+
+    @pytest.mark.asyncio
+    async def test_quarantine_command_success(self, cog, mock_interaction):
+        """Test successful quarantine via slash command."""
+        with (
+            patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 322496447687819264),
+            patch("am_bot.cogs.quarantine.QUARANTINE_ROLE_ID", 98765),
+        ):
+            target = make_mock_member(user_id=22222, name="BadUser")
+            mock_role = MagicMock()
+            mock_interaction.guild.get_role.return_value = mock_role
+            mock_interaction.guild.text_channels = []
+
+            await cog.quarantine_command.callback(
+                cog, mock_interaction, target, "Spamming in chat"
+            )
+
+            # Should defer and then follow up
+            mock_interaction.response.defer.assert_called_once_with(
+                ephemeral=True
+            )
+            mock_interaction.followup.send.assert_called_once()
+
+            # Check the followup message
+            call_args = mock_interaction.followup.send.call_args
+            assert "Quarantined" in call_args[0][0]
+            assert "Spamming in chat" in call_args[0][0]
+            assert call_args[1]["ephemeral"] is True
+
+            # Role should be assigned
+            target.add_roles.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_quarantine_command_default_reason(
+        self, cog, mock_interaction
+    ):
+        """Test quarantine command with default reason."""
+        with (
+            patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 322496447687819264),
+            patch("am_bot.cogs.quarantine.QUARANTINE_ROLE_ID", 98765),
+        ):
+            target = make_mock_member(user_id=22222)
+            mock_role = MagicMock()
+            mock_interaction.guild.get_role.return_value = mock_role
+            mock_interaction.guild.text_channels = []
+
+            await cog.quarantine_command.callback(
+                cog, mock_interaction, target, None
+            )
+
+            # Check the role was assigned with default reason
+            target.add_roles.assert_called_once()
+            call_kwargs = target.add_roles.call_args[1]
+            assert "Manual quarantine by staff" in call_kwargs["reason"]
+
+    @pytest.mark.asyncio
+    async def test_quarantine_command_clears_message_history(
+        self, cog, mock_interaction
+    ):
+        """Test that quarantine clears user's message history."""
+        from am_bot.cogs.quarantine import MessageRecord
+
+        with (
+            patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 322496447687819264),
+            patch("am_bot.cogs.quarantine.QUARANTINE_ROLE_ID", 98765),
+        ):
+            target_id = 22222
+            target = make_mock_member(user_id=target_id)
+            mock_role = MagicMock()
+            mock_interaction.guild.get_role.return_value = mock_role
+            mock_interaction.guild.text_channels = []
+
+            # Pre-populate some message history
+            now = datetime.now(timezone.utc)
+            cog.message_history[target_id] = [
+                MessageRecord("test message", 100, now)
+            ]
+
+            await cog.quarantine_command.callback(
+                cog, mock_interaction, target, None
+            )
+
+            # History should be cleared
+            assert target_id not in cog.message_history
+
+    @pytest.mark.asyncio
+    async def test_quarantine_command_purges_messages(
+        self, cog, mock_interaction
+    ):
+        """Test that quarantine purges messages from channels."""
+        with (
+            patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 322496447687819264),
+            patch("am_bot.cogs.quarantine.QUARANTINE_ROLE_ID", 98765),
+        ):
+            target = make_mock_member(user_id=22222)
+            mock_role = MagicMock()
+            mock_interaction.guild.get_role.return_value = mock_role
+
+            # Set up channels with messages to purge
+            channel1 = make_mock_channel(channel_id=111)
+            channel1.guild = mock_interaction.guild
+            channel1.purge.return_value = [MagicMock() for _ in range(3)]
+
+            channel2 = make_mock_channel(channel_id=222)
+            channel2.guild = mock_interaction.guild
+            channel2.purge.return_value = [MagicMock() for _ in range(2)]
+
+            mock_interaction.guild.text_channels = [channel1, channel2]
+
+            await cog.quarantine_command.callback(
+                cog, mock_interaction, target, None
+            )
+
+            # Check followup reports correct message count
+            call_args = mock_interaction.followup.send.call_args
+            assert "5 messages" in call_args[0][0]
