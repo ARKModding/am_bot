@@ -31,14 +31,6 @@ aws:
     # AWS_SECRET_ACCESS_KEY: ""
     # AWS_DEFAULT_REGION: ""
 
-# Quarantine honeypot configuration
-# Set these to enable the quarantine feature
-quarantine:
-  # Channel ID that acts as the honeypot trap
-  honeypotChannelId: ""
-  # Role ID to assign to users who trigger the honeypot
-  roleId: ""
-
 # Spam detection configuration
 spamDetection:
   # Similarity threshold (0.0-1.0) for detecting duplicate messages

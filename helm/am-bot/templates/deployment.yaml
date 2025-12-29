@@ -56,15 +56,6 @@ spec:
                   name: {{ include "am-bot.awsSecretName" . }}
                   key: AWS_DEFAULT_REGION
             {{- end }}
-            {{- /* Quarantine honeypot configuration */}}
-            {{- if .Values.quarantine.honeypotChannelId }}
-            - name: QUARANTINE_HONEYPOT_CHANNEL_ID
-              value: {{ .Values.quarantine.honeypotChannelId | quote }}
-            {{- end }}
-            {{- if .Values.quarantine.roleId }}
-            - name: QUARANTINE_ROLE_ID
-              value: {{ .Values.quarantine.roleId | quote }}
-            {{- end }}
             {{- /* Spam detection configuration */}}
             {{- if .Values.spamDetection.similarityThreshold }}
             - name: SPAM_SIMILARITY_THRESHOLD
