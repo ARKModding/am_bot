@@ -10,6 +10,7 @@ from .cogs.responses import ResponsesCog
 from .cogs.role_assignment import RoleAssignmentCog
 from .cogs.server_stats import ServerStatsCog
 from .cogs.workshop import WorkshopCog
+from .constants import GUILD_ID
 
 
 logger = logging.getLogger(__name__)
@@ -28,6 +29,18 @@ class ARKBot(Bot):
         logger.info(f"Logged on as {self.user}!")
         logger.info("Starting Tasks...")
         await self.add_cogs()
+        guild = discord.Object(id=GUILD_ID) 
+        
+        try:
+            self.tree.copy_global_to(guild=guild)
+            synced = await self.tree.sync(guild=guild)
+            logger.info(f"Synced {len(synced)} slash command(s) to guild {GUILD_ID}")
+        except discord.HTTPException as e:
+            logger.error(f"Failed to sync slash commands: {e}")
+        except Exception as e:
+            logger.exception(f"Unexpected error during sync: {e}")
+
+        logger.info("Bot is fully ready!")
 
     async def on_message(self, message):
         logger.info(f"Message from {message.author}: {message.content}")
