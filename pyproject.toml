@@ -79,7 +79,7 @@ addopts = "-v --tb=short"
 [tool.coverage.run]
 relative_files = true
 source = ["am_bot"]
-omit = ["tests/*"]
+omit = ["tests/*", "am_bot/logging_config.py"]
 
 [tool.coverage.report]
 exclude_lines = [
