@@ -45,7 +45,6 @@ class ARKBot(Bot):
         logger.info("Bot is fully ready!")
 
     async def on_message(self, message):
-        logger.info(f"Message from {message.author}: {message.content}")
         if message.author.id == self.user.id:
             return
         await self.process_commands(message)

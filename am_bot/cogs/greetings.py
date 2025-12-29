@@ -13,7 +13,7 @@ class GreetingsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        logger.debug(f"Member joined guild: {member}")
+        logger.info(f"New member joined {member.guild.name}: {member}")
         channel = member.guild.system_channel
         if channel is not None:
             await channel.send(f"Welcome {member.mention}!")
@@ -21,7 +21,6 @@ class GreetingsCog(commands.Cog):
     @commands.command()
     async def hello(self, ctx, *, member: discord.Member = None):
         """Says Hello"""
-        logger.debug("HELLO")
         member = member or ctx.author
         if self._last_member is None or self._last_member.id != member.id:
             await ctx.send(f"Hello {member.name}.")

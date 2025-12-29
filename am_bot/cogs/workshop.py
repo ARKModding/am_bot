@@ -23,10 +23,6 @@ class WorkshopCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        logger.debug(
-            f"Voice state activity:: Member: {member} "
-            f"Before: {before}, After: {after}"
-        )
         if (
             before.channel is None
             or before.channel.id != WORKSHOP_VOICE_CHANNEL_ID
@@ -34,14 +30,9 @@ class WorkshopCog(commands.Cog):
             after.channel is not None
             and after.channel.id == WORKSHOP_VOICE_CHANNEL_ID
         ):
-            # Add role for one-time join
-            logger.debug(
-                "Member joined AMC Workshop Voice Channel. "
-                "Adding AMC Workshop role..."
-            )
+            # Member joined workshop voice channel
+            logger.info(f"{member} joined AMC Workshop voice channel")
             await member.add_roles(member.guild.get_role(WORKSHOP_ROLE_ID))
-            # Add member overwrite permissions to view text channel
-            logger.debug("Adding member to text chat...")
             channel = member.guild.get_channel(
                 channel_id=WORKSHOP_TEXT_CHANNEL_ID
             )
@@ -53,11 +44,8 @@ class WorkshopCog(commands.Cog):
             after.channel is None
             or after.channel.id != WORKSHOP_VOICE_CHANNEL_ID
         ):
-            # Remove text channel member overwrite
-            logger.debug(
-                "Member has left AMC Workshop Voice Channel. "
-                "Removing member from text chat..."
-            )
+            # Member left workshop voice channel
+            logger.info(f"{member} left AMC Workshop voice channel")
             channel = member.guild.get_channel(
                 channel_id=WORKSHOP_TEXT_CHANNEL_ID
             )
@@ -65,14 +53,8 @@ class WorkshopCog(commands.Cog):
 
     async def text_cleanup_task(self):
         await asyncio.sleep(10)
-        logger.debug(
-            "AMC Workshop Text Cleanup Task Starting. Fetching Channel..."
-        )
         channel = await self.bot.fetch_channel(WORKSHOP_TEXT_CHANNEL_ID)
-        logger.debug(f"Channel Fetched: {channel}")
         while True:
             purge_time = datetime.utcnow() - timedelta(days=1)
-            logger.debug(f"Purging messages older than: {purge_time}")
             await channel.purge(before=purge_time)
-            logger.debug("Sleeping 10 minutes...")
             await asyncio.sleep(600)

@@ -1,13 +1,10 @@
-import logging
 import os
 
 from am_bot import ARKBot
+from am_bot.logging_config import setup_logging
 
 
-logger = logging.getLogger()
-logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
-logger.propagate = True
+setup_logging()
 
 
 if __name__ == "__main__":
