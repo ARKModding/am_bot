@@ -212,9 +212,16 @@ class QuarantineCog(commands.Cog):
         one_hour_ago = datetime.now(timezone.utc) - timedelta(hours=1)
         deleted_count = 0
 
+        # Purge from regular text channels
         for channel in guild.text_channels:
             deleted_count += await self._purge_channel(
                 channel, member, one_hour_ago
+            )
+
+        # Purge from voice channel text chats
+        for voice_channel in guild.voice_channels:
+            deleted_count += await self._purge_channel(
+                voice_channel, member, one_hour_ago
             )
 
         return deleted_count
