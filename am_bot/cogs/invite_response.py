@@ -28,22 +28,19 @@ class InviteResponseCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        logger.debug("Message Received")
+        # Ignore messages from self, wrong channel, or without proper reference
         if message.author.id == self.bot.user.id:
-            logger.debug("Message is from self, ignore.")
             return
         if message.channel.id != INVITE_HELP_TEXT_CHANNEL_ID:
-            logger.debug("Message is not in Invite Help channel, ignore.")
             return
         if (
             message.reference is None
             or message.reference.channel_id != INVITE_HELP_TEXT_CHANNEL_ID
         ):
-            logger.debug("Message reference is invalid. Ignore.")
             return
         if not message.content:
-            logger.debug("No Message Content. Ignoring.")
             return
+
         referenced: discord.Message = (
             message.reference.resolved
             if message.reference.resolved is not None
@@ -60,25 +57,20 @@ class InviteResponseCog(commands.Cog):
             embed = referenced.embeds[0]
             email = self._parse_embed_email(embed)
             help_request = embed.description
-            logger.debug(f"Parsed from embed - Email: {email}")
         else:
             # Fallback to legacy plain text format
-            logger.warning(referenced.content)
+            logger.debug(f"Legacy plain text format detected: {referenced.id}")
             email_pattern = re.compile(r"Email: (.*)")
             match = email_pattern.match(referenced.content)
             if match:
                 email = match.group(1)
             help_request = "\n".join(referenced.content.split("\n")[7:])
 
-        if not email:
-            logger.debug("Email not found in referenced message.")
+        if not email or not help_request:
+            logger.debug(f"Could not parse email/help request from message {referenced.id}")
             return
 
-        if not help_request:
-            logger.debug("Help request not found in referenced message.")
-            return
-
-        logger.debug(f"Email found for referenced message: {email}")
+        logger.info(f"Sending invite help response to {email}")
         body_txt = (
             f"Your Message: {help_request}\n\n"
             f"ARK Modding Discord Staff Response:\n\n"
