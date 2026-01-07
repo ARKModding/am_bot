@@ -331,7 +331,7 @@ class QuarantineCog(commands.Cog):
                     "to release you from quarantine."
                 ),
             )
-            logger.info(f"Created quarantine thread {thread.id} for {member}")
+            logger.info(f"Created quarantine thread for {member}")
             return thread
         except discord.errors.Forbidden:
             logger.error(
