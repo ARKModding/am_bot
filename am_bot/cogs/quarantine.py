@@ -12,6 +12,7 @@ from discord.ext import commands
 
 from am_bot.constants import (
     QUARANTINE_HONEYPOT_CHANNEL_ID,
+    QUARANTINE_LOG_CHANNEL_ID,
     QUARANTINE_ROLE_ID,
     STAFF_ROLE_ID,
 )
@@ -260,6 +261,47 @@ class QuarantineCog(commands.Cog):
             logger.warning(f"HTTP error purging in {channel.name}: {e}")
         return 0
 
+    async def _log_quarantine(
+        self, message: discord.Message, reason: str
+    ) -> None:
+        member = message.author
+        guild = message.guild
+
+        try:
+            log_channel = guild.get_channel(QUARANTINE_LOG_CHANNEL_ID)
+            if log_channel is None:
+                logger.error(
+                    "Unable to retrieve quarantine log channel: "
+                    f"{QUARANTINE_LOG_CHANNEL_ID}"
+                )
+                return
+
+            embed = discord.Embed(
+                title=" Quarantine Log",
+                description=(
+                    f"{member.mention} has been quarantined "
+                    "for violating rules."
+                ),
+                color=discord.Color.red(),
+                timestamp=datetime.now(timezone.utc),
+            )
+
+            embed.add_field(
+                name="Member",
+                value=f"{member.name}#{member.discriminator}",
+                inline=False,
+            )
+            embed.add_field(
+                name="Message Content",
+                value=f"`{discord.utils.escape_markdown(message.content)}`",
+                inline=False,
+            )
+            embed.add_field(name="Reason", value=reason, inline=False)
+
+            await log_channel.send(embed=embed)
+        except Exception as e:
+            logger.error(f"Failed to send quarantine log: {e}")
+
     async def _handle_quarantine(
         self, message: discord.Message, reason: str
     ) -> None:
@@ -270,6 +312,8 @@ class QuarantineCog(commands.Cog):
         logger.info(
             f"Quarantine triggered for {member} ({member.id}): {reason}"
         )
+
+        await self._log_quarantine(message, reason)
 
         # Delete the triggering message
         try:
