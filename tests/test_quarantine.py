@@ -4,6 +4,7 @@ import os
 from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, patch
 
+import discord
 import pytest
 
 from tests.conftest import (
@@ -562,6 +563,101 @@ class TestQuarantineCog:
 
             # Message should be deleted (quarantine triggered)
             message.delete.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_log_quarantine(self, cog):
+        """Test quarantine logging functionality."""
+        # Create mock objects
+        member = make_mock_member(name="test_user", discriminator=1234)
+        message = make_mock_message(
+            author=member,
+            content="Test message",
+        )
+
+        # Mock log channel and embed creation
+        with (
+            patch("am_bot.cogs.quarantine.QUARANTINE_LOG_CHANNEL_ID", 12345),
+        ):
+            log_channel = make_mock_channel(channel_id=12345)
+            message.guild.get_channel.return_value = log_channel
+
+            await cog._log_quarantine(message, "Test reason")
+
+            # Verify send was called with the correct embed data
+            log_channel.send.assert_called_once()
+
+            # Extract the embed from the call arguments
+            call_args = log_channel.send.call_args
+            embed = call_args.kwargs[
+                "embed"
+            ]  # Get the embed from keyword arguments
+
+            assert embed.title == " Quarantine Log"
+            assert (
+                f"{member.mention} has been quarantined for violating rules."
+                in embed.description
+            )
+            assert embed.color == discord.Color.red()
+
+            # Verify fields
+            assert len(embed.fields) == 3
+
+            member_field = embed.fields[0]
+            assert (
+                member_field.name == "Member"
+                and member_field.value
+                == f"{member.name}#{member.discriminator}"
+            )
+
+            content_field = embed.fields[1]
+            assert content_field.name == "Message Content"
+            assert f"`{message.content}`" in content_field.value
+
+            reason_field = embed.fields[2]
+            assert (
+                reason_field.name == "Reason"
+                and reason_field.value == "Test reason"
+            )
+
+    @pytest.mark.asyncio
+    async def test_log_quarantine_channel_not_found(self, cog):
+        """Test log handling when channel doesn't exist."""
+
+        message = make_mock_message()
+        with (
+            patch("am_bot.cogs.quarantine.QUARANTINE_LOG_CHANNEL_ID", 54321),
+            patch("am_bot.cogs.quarantine.logger.error") as mock_logging_error,
+        ):
+            message.guild.get_channel.return_value = None
+
+            await cog._log_quarantine(message, "Test reason")
+
+            # Verify error was logged
+            mock_logging_error.assert_called_once_with(
+                f"Unable to retrieve quarantine log channel: {54321}"
+            )
+
+    @pytest.mark.asyncio
+    async def test_log_quarantine_error_handling(self, cog):
+        """Test error handling in _log_quarantine."""
+
+        message = make_mock_message()
+        log_channel = make_mock_channel(channel_id=12345)
+        with (
+            patch("am_bot.cogs.quarantine.QUARANTINE_LOG_CHANNEL_ID", 12345),
+            patch.object(discord.Embed, "__init__") as mock_embed,
+            patch("am_bot.cogs.quarantine.logger.error") as mock_logging_error,
+        ):
+            message.guild.get_channel.return_value = log_channel
+            # Simulate an exception during embed creation
+            mock_embed.side_effect = Exception("Embed error")
+
+            await cog._log_quarantine(message, "Test reason")
+
+            # Verify error was logged
+            mock_logging_error.assert_called_once_with(
+                "Failed to send quarantine log: Embed error"
+            )
 
 
 class TestQuarantineSlashCommand:
