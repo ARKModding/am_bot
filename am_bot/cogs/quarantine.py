@@ -11,6 +11,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from am_bot.constants import (
+    QUARANTINE_CHANNEL_ID,
     QUARANTINE_HONEYPOT_CHANNEL_ID,
     QUARANTINE_LOG_CHANNEL_ID,
     QUARANTINE_ROLE_ID,
@@ -302,6 +303,53 @@ class QuarantineCog(commands.Cog):
         except Exception as e:
             logger.error(f"Failed to send quarantine log: {e}")
 
+    async def _setup_quarantine_post(
+        self, member: discord.Member, guild: discord.Guild, reason: str
+    ) -> discord.Thread | None:
+        """Setup the quarantine post for the member in the forum channel."""
+        try:
+            quarantine_channel = guild.get_channel(QUARANTINE_CHANNEL_ID)
+            if quarantine_channel is None:
+                logger.error(
+                    f"Quarantine channel {QUARANTINE_CHANNEL_ID} not found"
+                )
+                return None
+
+            # Verify it's a forum channel
+            if not isinstance(quarantine_channel, discord.ForumChannel):
+                logger.error(
+                    f"Quarantine channel {QUARANTINE_CHANNEL_ID} "
+                    "is not a forum channel"
+                )
+                return None
+
+            thread = await quarantine_channel.create_thread(
+                name=f"Quarantine - {member.name}",
+                content=(
+                    f"Quarantined for {reason}. <@{member.id}>, "
+                    f"please provide a reason to <@&{STAFF_ROLE_ID}> "
+                    "to release you from quarantine."
+                ),
+            )
+            logger.info(f"Created quarantine thread {thread.id} for {member}")
+            return thread
+        except discord.errors.Forbidden:
+            logger.error(
+                f"Failed to create quarantine thread for {member}: "
+                "insufficient permissions"
+            )
+        except discord.errors.HTTPException as e:
+            logger.error(
+                f"HTTP error creating quarantine thread for " f"{member}: {e}"
+            )
+        except Exception as e:
+            logger.error(
+                f"Unexpected error creating quarantine thread for "
+                f"{member}: {e}",
+                exc_info=True,
+            )
+        return None
+
     async def _handle_quarantine(
         self, message: discord.Message, reason: str
     ) -> None:
@@ -325,6 +373,9 @@ class QuarantineCog(commands.Cog):
             return
 
         deleted_count = await self._purge_member_messages(member, guild)
+
+        # Create quarantine forum post
+        await self._setup_quarantine_post(member, guild, reason)
 
         # Clear their message history from memory
         if member.id in self.message_history:
@@ -427,6 +478,11 @@ class QuarantineCog(commands.Cog):
 
         deleted_count = await self._purge_member_messages(
             member, interaction.guild
+        )
+
+        # Create quarantine forum post
+        await self._setup_quarantine_post(
+            member, interaction.guild, full_reason
         )
 
         # Clear their message history from memory

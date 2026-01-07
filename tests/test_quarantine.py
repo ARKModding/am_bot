@@ -905,3 +905,224 @@ class TestQuarantineSlashCommand:
             # Check followup reports correct message count
             call_args = mock_interaction.followup.send.call_args
             assert "5 messages" in call_args[0][0]
+
+    @pytest.mark.asyncio
+    async def test_setup_quarantine_post_success(self, cog):
+        """Test successful quarantine post creation."""
+        from unittest.mock import AsyncMock, create_autospec
+
+        with (
+            patch("am_bot.cogs.quarantine.QUARANTINE_CHANNEL_ID", 12345),
+            patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 98765),
+        ):
+            member = make_mock_member(user_id=11111, name="TestUser")
+            guild = make_mock_guild()
+
+            # Create a mock ForumChannel using create_autospec
+            # to pass isinstance
+            forum_channel = create_autospec(
+                discord.ForumChannel, spec_set=True, instance=True
+            )
+            forum_channel.id = 12345
+            forum_channel.name = "quarantine-forum"
+            forum_channel.create_thread = AsyncMock()
+
+            # Create a mock thread to return
+            mock_thread = MagicMock()
+            mock_thread.id = 99999
+            forum_channel.create_thread.return_value = mock_thread
+
+            guild.get_channel.return_value = forum_channel
+
+            result = await cog._setup_quarantine_post(
+                member, guild, "Test reason"
+            )
+
+            assert result == mock_thread
+            forum_channel.create_thread.assert_called_once()
+            call_kwargs = forum_channel.create_thread.call_args[1]
+            assert call_kwargs["name"] == "Quarantine - TestUser"
+            assert "Quarantined for Test reason" in call_kwargs["content"]
+            assert f"<@{member.id}>" in call_kwargs["content"]
+            assert "<@&98765>" in call_kwargs["content"]
+
+    @pytest.mark.asyncio
+    async def test_setup_quarantine_post_channel_not_found(self, cog):
+        """Test quarantine post when channel doesn't exist."""
+        with (
+            patch("am_bot.cogs.quarantine.QUARANTINE_CHANNEL_ID", 12345),
+            patch("am_bot.cogs.quarantine.logger.error") as mock_log_error,
+        ):
+            member = make_mock_member()
+            guild = make_mock_guild()
+            guild.get_channel.return_value = None
+
+            result = await cog._setup_quarantine_post(
+                member, guild, "Test reason"
+            )
+
+            assert result is None
+            mock_log_error.assert_called_once()
+            assert "not found" in str(mock_log_error.call_args)
+
+    @pytest.mark.asyncio
+    async def test_setup_quarantine_post_not_forum_channel(self, cog):
+        """Test quarantine post when channel is not a ForumChannel."""
+        with (
+            patch("am_bot.cogs.quarantine.QUARANTINE_CHANNEL_ID", 12345),
+            patch("am_bot.cogs.quarantine.logger.error") as mock_log_error,
+        ):
+            member = make_mock_member()
+            guild = make_mock_guild()
+
+            # Create a regular text channel (not a forum channel)
+            # Using spec=discord.TextChannel ensures isinstance returns False
+            text_channel = make_mock_channel(channel_id=12345)
+            guild.get_channel.return_value = text_channel
+
+            result = await cog._setup_quarantine_post(
+                member, guild, "Test reason"
+            )
+
+            assert result is None
+            mock_log_error.assert_called_once()
+            assert "is not a forum channel" in str(mock_log_error.call_args)
+
+    @pytest.mark.asyncio
+    async def test_setup_quarantine_post_forbidden(self, cog):
+        """Test quarantine post when bot lacks permissions."""
+        from unittest.mock import AsyncMock, create_autospec
+
+        with (
+            patch("am_bot.cogs.quarantine.QUARANTINE_CHANNEL_ID", 12345),
+            patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 98765),
+            patch("am_bot.cogs.quarantine.logger.error") as mock_log_error,
+        ):
+            member = make_mock_member(name="TestUser")
+            guild = make_mock_guild()
+
+            # Create a mock ForumChannel using create_autospec
+            forum_channel = create_autospec(
+                discord.ForumChannel, spec_set=True, instance=True
+            )
+            forum_channel.id = 12345
+            forum_channel.create_thread = AsyncMock()
+            forum_channel.create_thread.side_effect = discord.errors.Forbidden(
+                MagicMock(), "Missing permissions"
+            )
+
+            guild.get_channel.return_value = forum_channel
+
+            result = await cog._setup_quarantine_post(
+                member, guild, "Test reason"
+            )
+
+            assert result is None
+            mock_log_error.assert_called_once()
+            assert "insufficient permissions" in str(mock_log_error.call_args)
+
+    @pytest.mark.asyncio
+    async def test_setup_quarantine_post_http_exception(self, cog):
+        """Test quarantine post when HTTP exception occurs."""
+        from unittest.mock import AsyncMock, create_autospec
+
+        with (
+            patch("am_bot.cogs.quarantine.QUARANTINE_CHANNEL_ID", 12345),
+            patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 98765),
+            patch("am_bot.cogs.quarantine.logger.error") as mock_log_error,
+        ):
+            member = make_mock_member(name="TestUser")
+            guild = make_mock_guild()
+
+            # Create a mock ForumChannel using create_autospec
+            forum_channel = create_autospec(
+                discord.ForumChannel, spec_set=True, instance=True
+            )
+            forum_channel.id = 12345
+            forum_channel.create_thread = AsyncMock()
+            forum_channel.create_thread.side_effect = (
+                discord.errors.HTTPException(
+                    MagicMock(status=500), "Internal Server Error"
+                )
+            )
+
+            guild.get_channel.return_value = forum_channel
+
+            result = await cog._setup_quarantine_post(
+                member, guild, "Test reason"
+            )
+
+            assert result is None
+            mock_log_error.assert_called_once()
+            assert "HTTP error" in str(mock_log_error.call_args)
+
+    @pytest.mark.asyncio
+    async def test_setup_quarantine_post_general_exception(self, cog):
+        """Test quarantine post when unexpected exception occurs."""
+        from unittest.mock import AsyncMock, create_autospec
+
+        with (
+            patch("am_bot.cogs.quarantine.QUARANTINE_CHANNEL_ID", 12345),
+            patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 98765),
+            patch("am_bot.cogs.quarantine.logger.error") as mock_log_error,
+        ):
+            member = make_mock_member(name="TestUser")
+            guild = make_mock_guild()
+
+            # Create a mock ForumChannel using create_autospec
+            forum_channel = create_autospec(
+                discord.ForumChannel, spec_set=True, instance=True
+            )
+            forum_channel.id = 12345
+            forum_channel.create_thread = AsyncMock()
+            forum_channel.create_thread.side_effect = ValueError(
+                "Unexpected error"
+            )
+
+            guild.get_channel.return_value = forum_channel
+
+            result = await cog._setup_quarantine_post(
+                member, guild, "Test reason"
+            )
+
+            assert result is None
+            mock_log_error.assert_called_once()
+            assert "Unexpected error" in str(mock_log_error.call_args)
+
+    @pytest.mark.asyncio
+    async def test_setup_quarantine_post_verifies_content(self, cog):
+        """Test that quarantine post content includes all required elements."""
+        from unittest.mock import AsyncMock, create_autospec
+
+        with (
+            patch("am_bot.cogs.quarantine.QUARANTINE_CHANNEL_ID", 12345),
+            patch("am_bot.cogs.quarantine.STAFF_ROLE_ID", 98765),
+        ):
+            member = make_mock_member(user_id=11111, name="BadUser")
+            guild = make_mock_guild()
+            reason = "Cross-channel spam detected"
+
+            # Create a mock ForumChannel using create_autospec
+            forum_channel = create_autospec(
+                discord.ForumChannel, spec_set=True, instance=True
+            )
+            forum_channel.id = 12345
+            forum_channel.create_thread = AsyncMock()
+
+            mock_thread = MagicMock()
+            mock_thread.id = 99999
+            forum_channel.create_thread.return_value = mock_thread
+
+            guild.get_channel.return_value = forum_channel
+
+            await cog._setup_quarantine_post(member, guild, reason)
+
+            # Verify the content includes all required parts
+            call_kwargs = forum_channel.create_thread.call_args[1]
+            content = call_kwargs["content"]
+
+            assert "Quarantined for Cross-channel spam detected" in content
+            assert "<@11111>" in content  # Member mention
+            assert "<@&98765>" in content  # Staff role mention
+            assert "please provide a reason" in content
+            assert "to release you from quarantine" in content
