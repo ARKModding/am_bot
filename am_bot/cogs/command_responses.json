@@ -49,6 +49,35 @@
     "amcvids": {
       "duplicate": "amcv"
     },
+    "docs": {
+      "embed": {
+        "author": {
+          "name": "Documentation Websites",
+          "icon_url": "https://i.imgur.com/Rt7vu2j.png",
+          "proxy_icon_url": "https://media.discordapp.net/attachments/1194039176920834120/1461728918531870893/ADKLogo_128.png?ex=696b9ca3&is=696a4b23&hm=a6a7547b5f7b2d1aff9f24f07fe1fd5299cd8f81c4deea5d88b411e075513728&=&format=webp&quality=lossless"
+        },
+        "fields": [
+          {
+            "name": "===========================",
+            "value": "[Official modding documentation](https://devkit.studiowildcard.com/)\n
+			[Blog, snippets & tutorials](https://arkmodding.net/)\n
+			[Wiki, general FAQ & tutorials](https://wiki.arkmodding.net/)\n
+			[CurseForge - Ark knowledge base](https://support.curseforge.com/en/support/solutions/folders/9000199294/)\n
+			[CurseForge - Premium mods documentation](https://support.curseforge.com/en/support/solutions/articles/9000235469-ark-premium-mods/)\n
+			[CurseForge - Suggest your premium mod](https://arksa.curseforge.com/#premium)\n
+			[CurseForge - Moderation guidelines](https://support.curseforge.com/en/support/solutions/articles/9000232898-moderation-guidelines-for-ark-survival-ascended)",
+            "inline": true
+          }
+        ],
+        "color": 2921542,
+        "type": "rich",
+        "description": "Links to documentation websites, where you can find various info and guides.",
+        "title": ""
+      }
+    },
+    "links": {
+      "duplicate": "docs"
+    },
     "gso": {
       "content": "__**SAH Discord**__: https://discord.gg/h2k7agJJGS"
     },
@@ -63,4 +92,5 @@
     }
   }
 }
+
 
