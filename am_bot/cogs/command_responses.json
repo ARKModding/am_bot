@@ -83,6 +83,10 @@
     },
     "cf": {
       "content": "https://discord.gg/Q4bB5zE75f"
+    },
+    "tutorials": {
+      "commands": "docs, wcws, amcv"
     }
   }
 }
+
