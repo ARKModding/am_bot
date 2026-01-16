@@ -59,13 +59,7 @@
         "fields": [
           {
             "name": "===========================",
-            "value": "[Official modding documentation](https://devkit.studiowildcard.com/)\n
-			[Blog, snippets & tutorials](https://arkmodding.net/)\n
-			[Wiki, general FAQ & tutorials](https://wiki.arkmodding.net/)\n
-			[CurseForge - Ark knowledge base](https://support.curseforge.com/en/support/solutions/folders/9000199294/)\n
-			[CurseForge - Premium mods documentation](https://support.curseforge.com/en/support/solutions/articles/9000235469-ark-premium-mods/)\n
-			[CurseForge - Suggest your premium mod](https://arksa.curseforge.com/#premium)\n
-			[CurseForge - Moderation guidelines](https://support.curseforge.com/en/support/solutions/articles/9000232898-moderation-guidelines-for-ark-survival-ascended)",
+            "value": "[Official modding documentation](https://devkit.studiowildcard.com/)\n[Blog, snippets & tutorials](https://arkmodding.net/)\n[Wiki, general FAQ & tutorials](https://wiki.arkmodding.net/)\n[CurseForge - Ark knowledge base](https://support.curseforge.com/en/support/solutions/folders/9000199294/)\n[CurseForge - Premium mods documentation](https://support.curseforge.com/en/support/solutions/articles/9000235469-ark-premium-mods/)\n[CurseForge - Suggest your premium mod](https://arksa.curseforge.com/#premium)\n[CurseForge - Moderation guidelines](https://support.curseforge.com/en/support/solutions/articles/9000232898-moderation-guidelines-for-ark-survival-ascended)",
             "inline": true
           }
         ],
@@ -92,5 +86,6 @@
     }
   }
 }
+
 
 
