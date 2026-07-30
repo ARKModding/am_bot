@@ -18,7 +18,7 @@ dynamic = [
 [project.optional-dependencies]
 dev = [
     "bandit",
-    "black",
+    "black<26",
     "coverage",
     "diff-cover",
     "isort",
