@@ -33,9 +33,7 @@ class WorkshopCog(commands.Cog):
             # Member joined workshop voice channel
             logger.info(f"{member} joined AMC Workshop voice channel")
             await member.add_roles(member.guild.get_role(WORKSHOP_ROLE_ID))
-            channel = member.guild.get_channel(
-                channel_id=WORKSHOP_TEXT_CHANNEL_ID
-            )
+            channel = member.guild.get_channel(WORKSHOP_TEXT_CHANNEL_ID)
             await channel.set_permissions(member, view_channel=True)
         elif (
             before.channel is not None
@@ -46,9 +44,7 @@ class WorkshopCog(commands.Cog):
         ):
             # Member left workshop voice channel
             logger.info(f"{member} left AMC Workshop voice channel")
-            channel = member.guild.get_channel(
-                channel_id=WORKSHOP_TEXT_CHANNEL_ID
-            )
+            channel = member.guild.get_channel(WORKSHOP_TEXT_CHANNEL_ID)
             await channel.set_permissions(member, overwrite=None)
 
     async def text_cleanup_task(self):

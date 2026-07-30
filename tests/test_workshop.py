@@ -15,6 +15,11 @@ from tests.conftest import (
 )
 
 
+def make_get_channel(channel: MagicMock) -> MagicMock:
+    """Mock Guild.get_channel, whose real argument is positional only."""
+    return MagicMock(side_effect=lambda channel_id, /: channel)
+
+
 class TestWorkshopCog:
     """Tests for the WorkshopCog class."""
 
@@ -46,7 +51,7 @@ class TestWorkshopCog:
 
         # Create mock text channel
         text_channel = make_mock_channel(channel_id=workshop_text_id)
-        guild.get_channel.return_value = text_channel
+        guild.get_channel = make_get_channel(text_channel)
 
         # Create member
         member = make_mock_member()
@@ -65,7 +70,7 @@ class TestWorkshopCog:
         member.add_roles.assert_called_once_with(mock_role)
 
         # Should set channel permissions
-        guild.get_channel.assert_called_once_with(channel_id=workshop_text_id)
+        guild.get_channel.assert_called_once_with(workshop_text_id)
         text_channel.set_permissions.assert_called_once_with(
             member, view_channel=True
         )
@@ -81,7 +86,7 @@ class TestWorkshopCog:
 
         # Create mock text channel
         text_channel = make_mock_channel(channel_id=workshop_text_id)
-        guild.get_channel.return_value = text_channel
+        guild.get_channel = make_get_channel(text_channel)
 
         # Create member
         member = make_mock_member()
@@ -96,7 +101,7 @@ class TestWorkshopCog:
         await cog.on_voice_state_update(member, before, after)
 
         # Should remove channel permissions
-        guild.get_channel.assert_called_once_with(channel_id=workshop_text_id)
+        guild.get_channel.assert_called_once_with(workshop_text_id)
         text_channel.set_permissions.assert_called_once_with(
             member, overwrite=None
         )
@@ -109,7 +114,7 @@ class TestWorkshopCog:
 
         guild = make_mock_guild()
         text_channel = make_mock_channel(channel_id=workshop_text_id)
-        guild.get_channel.return_value = text_channel
+        guild.get_channel = make_get_channel(text_channel)
 
         member = make_mock_member()
         member.guild = guild
@@ -142,7 +147,7 @@ class TestWorkshopCog:
         guild = make_mock_guild()
         guild.get_role.return_value = mock_role
         text_channel = make_mock_channel(channel_id=workshop_text_id)
-        guild.get_channel.return_value = text_channel
+        guild.get_channel = make_get_channel(text_channel)
 
         member = make_mock_member()
         member.guild = guild
