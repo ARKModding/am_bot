@@ -10,7 +10,6 @@ A feature-rich Discord bot built for the ARK Modding community. Built with [disc
 - **Role Assignment** — Reaction-based role self-assignment with automatic reaction reset
 
 ### Community Features
-- **Starboard** — Messages with 5+ ⭐ reactions get featured in a starboard channel
 - **Server Stats** — Live member, boost, modder, and mapper counts displayed in channel names
 - **Workshop** — Voice channel-linked text channel with automatic access management and cleanup
 
@@ -150,7 +149,6 @@ am_bot/
 │       ├── responses.py      # Custom command responses
 │       ├── role_assignment.py # Reaction-based role assignment
 │       ├── server_stats.py   # Live stat channel updates
-│       ├── starboard.py      # Star reaction feature board
 │       ├── workshop.py       # Workshop voice/text channel management
 │       ├── command_responses.json
 │       └── assignable_roles.json

@@ -240,8 +240,6 @@ env:
 
 5. **Workshop cleanup**: `WorkshopCog` purges messages older than 24 hours from the workshop text channel.
 
-6. **Starboard tracking**: `StarboardCog` loads existing starred message IDs on startup to prevent duplicates.
-
 ## Questions?
 
 Check the existing cogs for patterns. The codebase is well-tested — reference `tests/conftest.py` for mock utilities.
