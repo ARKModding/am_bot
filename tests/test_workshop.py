@@ -1,10 +1,17 @@
 """Tests for the WorkshopCog module."""
 
-from unittest.mock import MagicMock
+import asyncio
+from datetime import datetime, timezone
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from am_bot.cogs.workshop import WorkshopCog
+from am_bot.cogs.workshop import (
+    CLEANUP_INTERVAL_SECONDS,
+    PURGE_AGE,
+    WORKSHOP_TEXT_CHANNEL_ID,
+    WorkshopCog,
+)
 from tests.conftest import (
     make_mock_bot,
     make_mock_channel,
@@ -215,3 +222,60 @@ class TestWorkshopCog:
         cog.cog_load()
 
         cog.bot.loop.create_task.assert_called_once()
+
+
+class TestTextCleanupTask:
+    """Tests for the periodic workshop text channel cleanup."""
+
+    @pytest.fixture
+    def cog(self):
+        """Create a WorkshopCog instance with mocked bot."""
+        return WorkshopCog(make_mock_bot())
+
+    @pytest.mark.asyncio
+    async def test_purges_messages_older_than_a_day(self, cog):
+        """Messages past the purge age are removed from the text channel."""
+        channel = make_mock_channel(channel_id=WORKSHOP_TEXT_CHANNEL_ID)
+        channel.purge.return_value = [MagicMock(), MagicMock()]
+        cog.bot.get_channel.return_value = channel
+
+        await cog.purge_old_messages()
+
+        cutoff = channel.purge.await_args.kwargs["before"]
+        assert datetime.now(timezone.utc) - cutoff >= PURGE_AGE
+
+    @pytest.mark.asyncio
+    async def test_fetches_channel_when_not_cached(self, cog):
+        """An uncached channel is fetched instead of crashing the task."""
+        channel = make_mock_channel(channel_id=WORKSHOP_TEXT_CHANNEL_ID)
+        cog.bot.get_channel.return_value = None
+        cog.bot.fetch_channel.return_value = channel
+
+        await cog.purge_old_messages()
+
+        cog.bot.fetch_channel.assert_awaited_once_with(
+            WORKSHOP_TEXT_CHANNEL_ID
+        )
+        channel.purge.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_loop_survives_a_failed_purge(self, cog):
+        """A failed purge is logged and the task waits for the next run."""
+        cog.purge_old_messages = AsyncMock(side_effect=RuntimeError("boom"))
+        sleeps = []
+
+        async def fake_sleep(seconds):
+            sleeps.append(seconds)
+            if len(sleeps) > 2:
+                raise asyncio.CancelledError
+
+        with patch("am_bot.cogs.workshop.asyncio.sleep", fake_sleep):
+            with pytest.raises(asyncio.CancelledError):
+                await cog.text_cleanup_task()
+
+        assert cog.purge_old_messages.await_count == 2
+        assert sleeps == [
+            10,
+            CLEANUP_INTERVAL_SECONDS,
+            CLEANUP_INTERVAL_SECONDS,
+        ]

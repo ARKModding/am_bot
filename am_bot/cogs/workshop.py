@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from discord.ext import commands
 
@@ -12,6 +12,8 @@ from ..constants import (
 
 
 logger = logging.getLogger(__name__)
+CLEANUP_INTERVAL_SECONDS = 600
+PURGE_AGE = timedelta(days=1)
 
 
 class WorkshopCog(commands.Cog):
@@ -49,8 +51,18 @@ class WorkshopCog(commands.Cog):
 
     async def text_cleanup_task(self):
         await asyncio.sleep(10)
-        channel = await self.bot.fetch_channel(WORKSHOP_TEXT_CHANNEL_ID)
         while True:
-            purge_time = datetime.utcnow() - timedelta(days=1)
-            await channel.purge(before=purge_time)
-            await asyncio.sleep(600)
+            try:
+                await self.purge_old_messages()
+            except Exception:
+                logger.exception("Workshop text cleanup failed")
+            await asyncio.sleep(CLEANUP_INTERVAL_SECONDS)
+
+    async def purge_old_messages(self) -> None:
+        channel = self.bot.get_channel(WORKSHOP_TEXT_CHANNEL_ID)
+        if channel is None:
+            channel = await self.bot.fetch_channel(WORKSHOP_TEXT_CHANNEL_ID)
+
+        cutoff = datetime.now(timezone.utc) - PURGE_AGE
+        purged = await channel.purge(before=cutoff)
+        logger.info(f"Workshop text cleanup removed {len(purged)} messages")
