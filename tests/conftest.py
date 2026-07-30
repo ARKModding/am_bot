@@ -45,9 +45,6 @@ def make_mock_member(
     member.roles = roles or []
     member.add_roles = AsyncMock()
     member.remove_roles = AsyncMock()
-    member.avatar_url_as = MagicMock(
-        return_value=f"https://cdn.discordapp.com/avatars/{user_id}/test.png?size=128"
-    )
     return member
 
 
