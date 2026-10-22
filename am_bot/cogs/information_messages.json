@@ -63,7 +63,7 @@
             "channel_id": 770427308594298890,
             "embeds": [
                 {
-                    "description": "Our server has an array, pun not intended, of self-assignable roles. These roles serve as a means of highlighting your interests or skills here as a part of this community, or they may \"subscribe\" you to particular events or activities.\n\nTo assign any of the following roles to yourself, simply click on the corresponding emoji attached to this message.\n\nYou may also do so using `?rank <role>` in <#243161930666213386>.",
+                    "description": "Our server has an array, pun not intended, of self-assignable roles. These roles serve as a means of highlighting your interests or skills here as a part of this community, or they may \"subscribe\" you to particular events or activities.\n\nTo assign any of the following roles to yourself, simply click on the corresponding emoji attached to this message.",
                     "color": 1093364,
                     "type": "rich",
                     "author": {
