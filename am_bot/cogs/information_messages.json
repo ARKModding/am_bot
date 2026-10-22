@@ -101,7 +101,12 @@
                     "fields": [
                         {
                             "name": "__Jobs Board__ | :clipboard:",
-                            "value": "​\n:small_blue_diamond: All contract terms, including compensation arrangements, must be discussed in private direct-messages only. Any such discussion will be removed from the chat channels.\n:small_blue_diamond: **Staff** will not mediate any contractual disputes between members.  You enter into agreements at your own risk.\n\nIf you accept and agree to the above, click below on the :clipboard: to receive access to <#481952404829503538>.\n​",
+                            "value": "​\n:small_blue_diamond: All contract terms, including compensation arrangements, must be discussed in private direct-messages only. Any such discussion will be removed from the chat channels.\n:small_blue_diamond: **Staff** will not mediate any contractual disputes between members.  You enter into agreements at your own risk.\n​",
+                            "inline": false
+                        },
+                        {
+                            "name": "__Community Safety & Commission-Related Conduct__",
+                            "value": "​\nWhile **Staff** does not mediate contractual disputes, enforce private agreements, or assume responsibility for transactions between members, **Staff** reserves the right to review reports of potentially fraudulent, deceptive, or otherwise harmful conduct arising from activities facilitated through the Jobs Board.\n\nWhere credible concerns exist, **Staff** may temporarily restrict a member's access while reviewing the potential risk to the community.\n\n**Staff** may request an explanation and consider evidence of good-faith efforts to address reported concerns. Failure to respond or sufficiently address serious concerns may result in continued restrictions or permanent removal from the **Server**.\n\nAll such actions are taken solely for community safety and moderation purposes. They do not constitute legal findings, contractual judgments, or mediation between the involved parties.\n\nIf you accept and agree to the above, click below on the :clipboard: to receive access to <#481952404829503538>.\n​",
                             "inline": false
                         },
                         {
