@@ -510,3 +510,206 @@ class TestResetReactions:
 
         assert cog.reset_all_reactions.await_count == 2
         assert sleeps == [10, RESET_INTERVAL_SECONDS, RESET_INTERVAL_SECONDS]
+
+
+class TestInformationMessageKeys:
+    """Reaction roles bound to posts from InformationCog."""
+
+    @pytest.fixture
+    def cog(self):
+        from am_bot.cogs.role_assignment import RoleAssignmentCog
+
+        return RoleAssignmentCog(make_mock_bot())
+
+    def _bind(self, cog, message_ids, ready=None):
+        info = MagicMock()
+        info.message_ids = message_ids
+        info.ready = ready if ready is not None else asyncio.Event()
+        cog.bot.get_cog.return_value = info
+        return info
+
+    @pytest.mark.asyncio
+    async def test_reaction_uses_posted_message_id(self, cog):
+        """A reaction on the posted terms message grants the role."""
+        roles = {
+            "📋": {
+                "name": "Jobs Board",
+                "channel_id": 123456,
+                "role_id": 111111,
+                "message_key": "terms",
+            }
+        }
+        self._bind(cog, {"terms": 555})
+        mock_role = make_mock_role(role_id=111111, name="Jobs Board")
+        guild = make_mock_guild()
+        guild.get_role.return_value = mock_role
+        payload = make_mock_reaction_payload(emoji_name="📋", message_id=555)
+        payload.member.guild = guild
+
+        with patch("am_bot.cogs.role_assignment.ASSIGNABLE_ROLES", roles):
+            await cog.on_raw_reaction_add(payload)
+
+        payload.member.add_roles.assert_awaited_once_with(mock_role)
+
+    @pytest.mark.asyncio
+    async def test_reaction_ignored_until_message_is_posted(self, cog):
+        """No role change until InformationCog has posted the message."""
+        roles = {
+            "📋": {
+                "name": "Jobs Board",
+                "channel_id": 123456,
+                "role_id": 111111,
+                "message_key": "terms",
+            }
+        }
+        self._bind(cog, {})
+        payload = make_mock_reaction_payload(emoji_name="📋", message_id=555)
+
+        with patch("am_bot.cogs.role_assignment.ASSIGNABLE_ROLES", roles):
+            await cog.on_raw_reaction_add(payload)
+
+        payload.member.add_roles.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_reset_uses_posted_message_id(self, cog):
+        """The reaction reset targets the id InformationCog recorded."""
+        roles = {
+            "📋": {
+                "name": "Jobs Board",
+                "channel_id": 123456,
+                "role_id": 111111,
+                "message_key": "terms",
+            },
+            "cpp": {
+                "name": "C++",
+                "emoji_id": 444444,
+                "channel_id": 123456,
+                "role_id": 555555,
+                "message_key": "terms",
+            },
+        }
+        self._bind(cog, {"terms": 555})
+        cog.reset_message_reactions = AsyncMock(return_value=2)
+
+        with patch("am_bot.cogs.role_assignment.ASSIGNABLE_ROLES", roles):
+            await cog.reset_all_reactions()
+
+        cog.reset_message_reactions.assert_awaited_once()
+        channel_id, message_id, entries = (
+            cog.reset_message_reactions.await_args.args
+        )
+        assert channel_id == 123456
+        assert message_id == 555
+        assert len(entries) == 2
+
+    @pytest.mark.asyncio
+    async def test_reset_skips_unposted_keys(self, cog):
+        """A key with no posted message is skipped, not fetched."""
+        roles = {
+            "📋": {
+                "name": "Jobs Board",
+                "channel_id": 123456,
+                "role_id": 111111,
+                "message_key": "terms",
+            }
+        }
+        self._bind(cog, {})
+        cog.reset_message_reactions = AsyncMock()
+
+        with patch("am_bot.cogs.role_assignment.ASSIGNABLE_ROLES", roles):
+            await cog.reset_all_reactions()
+
+        cog.reset_message_reactions.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_reset_waits_until_information_posts_are_ready(self, cog):
+        """The first reset does not run before the information sync."""
+        ready = asyncio.Event()
+        self._bind(cog, {"terms": 555}, ready=ready)
+        cog.reset_all_reactions = AsyncMock()
+        sleeps = []
+        real_sleep = asyncio.sleep
+
+        async def fake_sleep(seconds):
+            sleeps.append(seconds)
+            raise asyncio.CancelledError
+
+        with patch("am_bot.cogs.role_assignment.asyncio.sleep", fake_sleep):
+            task = asyncio.create_task(cog.reset_reactions())
+            await real_sleep(0)
+            assert not task.done()
+            assert sleeps == []
+            ready.set()
+            with pytest.raises(asyncio.CancelledError):
+                await task
+
+        assert sleeps == [10]
+
+    @pytest.mark.asyncio
+    async def test_remove_uses_posted_message_id(self, cog):
+        """Removing a reaction on the posted message removes the role."""
+        roles = {
+            "📋": {
+                "name": "Jobs Board",
+                "channel_id": 123456,
+                "role_id": 111111,
+                "message_key": "terms",
+            }
+        }
+        self._bind(cog, {"terms": 555})
+        mock_role = make_mock_role(role_id=111111, name="Jobs Board")
+        guild = make_mock_guild()
+        guild.get_role.return_value = mock_role
+        member = make_mock_member()
+        guild.fetch_member.return_value = member
+        cog.bot.fetch_guild.return_value = guild
+        payload = make_mock_reaction_payload(
+            emoji_name="📋",
+            message_id=555,
+            user_id=12345,
+            guild_id=guild.id,
+        )
+
+        with patch("am_bot.cogs.role_assignment.ASSIGNABLE_ROLES", roles):
+            await cog.on_raw_reaction_remove(payload)
+
+        member.remove_roles.assert_called_once_with(mock_role)
+
+    @pytest.mark.asyncio
+    async def test_reaction_without_a_message_restriction(self, cog):
+        """A role with no message id still applies on any message."""
+        roles = {
+            "📋": {
+                "name": "Jobs Board",
+                "channel_id": 123456,
+                "role_id": 111111,
+            }
+        }
+        mock_role = make_mock_role(role_id=111111, name="Jobs Board")
+        guild = make_mock_guild()
+        guild.get_role.return_value = mock_role
+        payload = make_mock_reaction_payload(emoji_name="📋", message_id=42)
+        payload.member.guild = guild
+
+        with patch("am_bot.cogs.role_assignment.ASSIGNABLE_ROLES", roles):
+            await cog.on_raw_reaction_add(payload)
+
+        payload.member.add_roles.assert_awaited_once_with(mock_role)
+
+    @pytest.mark.asyncio
+    async def test_message_key_ignored_without_information_cog(self, cog):
+        """A MagicMock cog is not treated as posted message ids."""
+        roles = {
+            "📋": {
+                "name": "Jobs Board",
+                "channel_id": 123456,
+                "role_id": 111111,
+                "message_key": "terms",
+            }
+        }
+        payload = make_mock_reaction_payload(emoji_name="📋", message_id=555)
+
+        with patch("am_bot.cogs.role_assignment.ASSIGNABLE_ROLES", roles):
+            await cog.on_raw_reaction_add(payload)
+
+        payload.member.add_roles.assert_not_called()

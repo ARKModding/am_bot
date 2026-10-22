@@ -3,69 +3,69 @@
         "name": "Jobs Board",
         "channel_id": 769017646259109908,
         "role_id": 483698137886621706,
-        "message_id": 770422336121470976
+        "message_key": "terms"
     },
     "cpp": {
         "name": "C++",
         "emoji_id": 770165093865619477,
         "channel_id": 769017646259109908,
         "role_id": 642067262370480129,
-        "message_id": 770422336121470976
+        "message_key": "terms"
     },
     "1️⃣": {
         "name": "Modder",
         "channel_id": 770427308594298890,
         "role_id": 190385081523765248,
-        "message_id": 770434719543459901
+        "message_key": "user-roles"
     },
     "2️⃣": {
         "name": "Mapper",
         "channel_id": 770427308594298890,
         "role_id": 190385107297632257,
-        "message_id": 770434719543459901
+        "message_key": "user-roles"
     },
     "3️⃣": {
         "name": "FX Artist",
         "channel_id": 770427308594298890,
         "role_id": 273098929204363266,
-        "message_id": 770434719543459901
+        "message_key": "user-roles"
     },
     "4️⃣": {
         "name": "3D Artist",
         "channel_id": 770427308594298890,
         "role_id": 190385135181496321,
-        "message_id": 770434719543459901
+        "message_key": "user-roles"
     },
     "5️⃣": {
         "name": "2D Artist",
         "channel_id": 770427308594298890,
         "role_id": 258721938774425601,
-        "message_id": 770434719543459901
+        "message_key": "user-roles"
     },
     "6️⃣": {
         "name": "Voice Actor",
         "channel_id": 770427308594298890,
         "role_id": 281830584249090048,
-        "message_id": 770434719543459901
+        "message_key": "user-roles"
     },
     "7️⃣": {
         "name": "Content Creator",
         "channel_id": 770427308594298890,
         "role_id": 521746832578183170,
-        "message_id": 770434719543459901
+        "message_key": "user-roles"
     },
     "ark_modding_anim": {
         "name": "AMC Workshop",
         "emoji_id": 586765622512320516,
         "channel_id": 770427308594298890,
         "role_id": 770207045357797378,
-        "message_id": 770434719543459901
+        "message_key": "user-roles"
     },
     "twitch": {
         "name": "Twitch Streams",
         "emoji_id": 876090679086948383,
         "channel_id": 770427308594298890,
         "role_id": 877424109460529172,
-        "message_id": 770434719543459901
+        "message_key": "user-roles"
     }
 }

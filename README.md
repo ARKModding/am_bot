@@ -10,6 +10,7 @@ A feature-rich Discord bot built for the ARK Modding community. Built with [disc
 - **Role Assignment** — Reaction-based role self-assignment with automatic reaction reset
 
 ### Community Features
+- **Information** — Posts and updates the rules, community info, terms, and greetings messages
 - **Server Stats** — Live member, boost, modder, and mapper counts displayed in channel names
 - **Workshop** — Voice channel-linked text channel with automatic access management and cleanup
 
@@ -84,11 +85,13 @@ helm upgrade --install am-bot ./helm/am-bot -f values.yaml
 | `SPAM_CHANNEL_THRESHOLD` | Number of channels for spam trigger (default: 3) | No |
 | `MESSAGE_HISTORY_SECONDS` | Message history retention in seconds (default: 3600) | No |
 | `SPAM_MIN_MESSAGE_LENGTH` | Minimum message length for spam detection (default: 20) | No |
+| `INFORMATION_STATE_PATH` | Cache of posted information message ids (default: temp dir). The posts themselves carry the id, so a restart still edits them. | No |
 
 ### Configuration Files
 
 - `am_bot/cogs/command_responses.json` — Custom command trigger/response mappings
-- `am_bot/cogs/assignable_roles.json` — Reaction role configuration
+- `am_bot/cogs/assignable_roles.json` — Reaction role configuration. `message_key` points at a post in `information_messages.json`
+- `am_bot/cogs/information_messages.json` — Rules, community info, terms, and greetings posts
 - `am_bot/constants.py` — Server-specific channel and role IDs
 
 ## Development
@@ -144,6 +147,8 @@ am_bot/
 │   ├── ses.py                # AWS SES email utility
 │   └── cogs/
 │       ├── greetings.py      # Welcome messages, hello command
+│       ├── information.py    # Rules, terms, greetings, community info posts
+│       ├── information_messages.json
 │       ├── invite_response.py # Email responses to invite requests
 │       ├── quarantine.py     # Spam detection and honeypot
 │       ├── responses.py      # Custom command responses

@@ -18,11 +18,22 @@ ADD_REACTION_ATTEMPTS = 3
 ADD_REACTION_RETRY_SECONDS = 5
 
 
-def entries_by_message(assignable_roles: dict) -> dict:
+def entries_by_message(assignable_roles: dict, message_id_for=None) -> dict:
     """Group the role config by the message its reactions belong on."""
     grouped = {}
+    missing = set()
     for emoji, role_details in assignable_roles.items():
-        key = (role_details["channel_id"], role_details["message_id"])
+        if message_id_for is None:
+            message_id = role_details.get("message_id")
+        else:
+            message_id = message_id_for(role_details)
+        if not message_id:
+            label = role_details.get("message_key", role_details["name"])
+            if label not in missing:
+                logger.warning(f"No posted message for {label} yet")
+                missing.add(label)
+            continue
+        key = (role_details["channel_id"], message_id)
         grouped.setdefault(key, []).append((emoji, role_details))
     return grouped
 
@@ -54,9 +65,8 @@ class RoleAssignmentCog(commands.Cog):
         if payload.emoji.name not in ASSIGNABLE_ROLES:
             return
         emoji = payload.emoji.name
-        if (
-            "message_id" in ASSIGNABLE_ROLES[emoji]
-            and payload.message_id != ASSIGNABLE_ROLES[emoji]["message_id"]
+        if not self.reaction_targets_message(
+            ASSIGNABLE_ROLES[emoji], payload.message_id
         ):
             return
 
@@ -76,9 +86,8 @@ class RoleAssignmentCog(commands.Cog):
         if payload.emoji.name not in ASSIGNABLE_ROLES:
             return
         emoji = payload.emoji.name
-        if (
-            "message_id" in ASSIGNABLE_ROLES[emoji]
-            and payload.message_id != ASSIGNABLE_ROLES[emoji]["message_id"]
+        if not self.reaction_targets_message(
+            ASSIGNABLE_ROLES[emoji], payload.message_id
         ):
             return
 
@@ -94,7 +103,39 @@ class RoleAssignmentCog(commands.Cog):
             if server_stats_cog:
                 await server_stats_cog.update_role_counts()
 
+    def resolved_message_id(self, role_details: dict) -> int | None:
+        """Message id a reaction role is attached to, once it is known."""
+        key = role_details.get("message_key")
+        if key:
+            return self.message_id_for_key(key)
+        return role_details.get("message_id")
+
+    def message_id_for_key(self, key: str) -> int | None:
+        info = self.bot.get_cog("InformationCog")
+        message_ids = getattr(info, "message_ids", None)
+        if not isinstance(message_ids, dict):
+            return None
+        return message_ids.get(key)
+
+    def reaction_targets_message(
+        self, role_details: dict, message_id: int
+    ) -> bool:
+        if (
+            "message_key" not in role_details
+            and "message_id" not in role_details
+        ):
+            return True
+        expected = self.resolved_message_id(role_details)
+        return expected is not None and message_id == expected
+
+    async def wait_for_posted_messages(self) -> None:
+        info = self.bot.get_cog("InformationCog")
+        ready = getattr(info, "ready", None)
+        if isinstance(ready, asyncio.Event):
+            await ready.wait()
+
     async def reset_reactions(self):
+        await self.wait_for_posted_messages()
         await asyncio.sleep(10)
         while True:
             try:
@@ -108,7 +149,7 @@ class RoleAssignmentCog(commands.Cog):
         message_count = 0
 
         for (channel_id, message_id), entries in entries_by_message(
-            ASSIGNABLE_ROLES
+            ASSIGNABLE_ROLES, self.resolved_message_id
         ).items():
             try:
                 emoji_count += await self.reset_message_reactions(
