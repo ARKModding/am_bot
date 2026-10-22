@@ -1,0 +1,152 @@
+{
+    "note": "Posts for #rules-and-guidelines, #community-info, #terms-and-conditions, and #greetings. Edit this file and restart the bot; it updates the messages it already posted. Emoji shortcodes are literal text, matching the old Dyno posts. Zero-width spaces in the terms fields are intentional.",
+    "messages": [
+        {
+            "key": "rules",
+            "channel_id": 154057808696967188,
+            "embeds": [
+                {
+                    "description": ":one: **No harassment, discrimination, racism or abuse of any kind.**\n_This includes slurs of all kinds, homo/transphobia, etc. There is **zero** tolerance for this, a permanent ban **will** occur._\n\n:two: **No inappropriate usernames, emotes or avatars.**\n_If your name is moderated and you possess a role that permits name changes and you subvert the moderation, you could lose your privileges or be banned._\n\n:three: **No drug, NSFW, pornography, sexually explicit or suggestive content.**\n_If it's illegal, obscenely offensive or unstuiable for minors or public viewing, don't post it._\n\n:four: **No advertising, marketing, promotion or financial agreements.**\n_For commissioned works, go to <#481952404829503538>. **NOTE:** To post, the channel requires acceptance of T&C located here: <#769017646259109908>._\n\n:five: **No spamming the server or users via DM.**\n_This includes links, invites, mentions or cross-posting - repeating identical/similar messages across multiple channels. Delete your previous message(s) if you repost._\n\n:six: **No sharing of illegal obtained content or methods for illegally obtaining content.**\n_We are not Wildcard, we will endeavour to protect ourselves and the community at large, within reason, to the best of our ability from all legal liability and retaliation._\n\n:seven: **No sharing of content that violates intellectual property rights or copyright laws.**\n_See rule #6._\n\n:eight: **Do not tag <@&322496447687819264> unless our attention is urgently needed.**\n_If you want to speak to a Staff member, **'@'** them or message them directly. Abuse of this will result in action taken against you._\n\n:nine: **Discord's Community Guidelines apply.** _[Find them here.](https://discord.com/new/guidelines \"Discord Community Guidelines\")_\n_Irrespective of any rules/guidelines already outlined on the server, you also fall under Discord' ToS._",
+                    "color": 1093364,
+                    "type": "rich",
+                    "author": {
+                        "name": "ARK Modding Community | Rules",
+                        "icon_url": "https://cdn.discordapp.com/icons/153690873186484224/a_8779605d73f4fb1b78f944417c0d4e74.png"
+                    },
+                    "footer": {
+                        "text": "ARK Modding Community Staff",
+                        "icon_url": "https://cdn.discordapp.com/icons/153690873186484224/a_8779605d73f4fb1b78f944417c0d4e74.png"
+                    }
+                }
+            ]
+        },
+        {
+            "key": "guidelines",
+            "channel_id": 154057808696967188,
+            "embeds": [
+                {
+                    "description": ":small_orange_diamond: It is expected, and required, of all users here to be as civil, courteous and respectful as humanly possible at all times. Users are to give, and receive, a basic level of respect and maintain common decency at all times. Be the bigger person.\n\n:small_orange_diamond: Please remember that we are not lawyers or a mediation service. We might offer very limited and general advice, but if you have such a dispute with any user, it is up to the involved parties to handle this privately or outside of the community.\n\n:small_orange_diamond: It is preferred if users are active in the server, we're here to share what we learn and leeching from the community's efforts is neither a nice thing to do or the best way to learn as many problems in modding are unique with unique solutions. \n\n:small_orange_diamond: Users are expected to be mindful of the channels they are in when engaging, this server is very strict in topics to keep related information as close as possible to like-wise information. Pay attention to the channel names and their topics, names are as descriptive as possible!\n\n:small_orange_diamond: For the sake of community cohesion, do right by those who come to your aid by recognising their efforts, especially if they are contributing to your project(s) or helping you in a not insignificant way.\n\n:small_orange_diamond: Please don't ask about Editor updates or announce them before an official mention. We, the Staff, don't know when they're coming or what's going to be in them. We will endeavour to be aware of updates before most users so we can find any issues and, in an ideal world, get them fixed before problems spread.\n\n**Note:** _All Staff reserve the right to Moderate channels and users, where necessary/appropriate, for violations of our guidelines at their discretion, in addition to server rules._",
+                    "color": 1093364,
+                    "type": "rich",
+                    "author": {
+                        "name": "ARK Modding Community | Guidelines",
+                        "icon_url": "https://cdn.discordapp.com/icons/153690873186484224/a_8779605d73f4fb1b78f944417c0d4e74.png"
+                    },
+                    "footer": {
+                        "text": "ARK Modding Community Staff",
+                        "icon_url": "https://cdn.discordapp.com/icons/153690873186484224/a_8779605d73f4fb1b78f944417c0d4e74.png"
+                    }
+                }
+            ]
+        },
+        {
+            "key": "community-info",
+            "channel_id": 770427308594298890,
+            "embeds": [
+                {
+                    "description": "All posts, unless otherwise stated, are to be considered public domain. Meaning, the posted graphs or information can then be posted elsewhere (giving credit to the original author, where possible).\n\nIf you wish to exclude yourself from this, please make mention of this before posting the information or direct-message the person you are providing the information to. This is so that people can gather and consolidate good information without fear of offending the author!\n\nIn addition to this Discord server, we operate the **r/arkmodding** subreddit and our website: https://arkmodding.net\n\nA brief rundown of the three _main_ areas, or purposes, of the site:\n\nhttps://arkmodding.net/ -- Blog, snippets, tutorials & source files.\nhttps://wiki.arkmodding.net/ -- Wiki, General FAQ, documentation & tutorials.\nhttps://discord.arkmodding.net -- The only way to join this server.\n\nThese sites are a MAJOR work in progress! Be patient with us, and if there is good information that you have, feel free to add it to the wiki!",
+                    "color": 1093364,
+                    "type": "rich",
+                    "author": {
+                        "name": "ARK Modding Community Important Info",
+                        "icon_url": "https://cdn.discordapp.com/icons/153690873186484224/a_8779605d73f4fb1b78f944417c0d4e74.png"
+                    },
+                    "footer": {
+                        "text": "ARK Modding Community Staff",
+                        "icon_url": "https://cdn.discordapp.com/icons/153690873186484224/a_8779605d73f4fb1b78f944417c0d4e74.png"
+                    }
+                }
+            ]
+        },
+        {
+            "key": "user-roles",
+            "channel_id": 770427308594298890,
+            "embeds": [
+                {
+                    "description": "Our server has an array, pun not intended, of self-assignable roles. These roles serve as a means of highlighting your interests or skills here as a part of this community, or they may \"subscribe\" you to particular events or activities.\n\nTo assign any of the following roles to yourself, simply click on the corresponding emoji attached to this message.\n\nYou may also do so using `?rank <role>` in <#243161930666213386>.",
+                    "color": 1093364,
+                    "type": "rich",
+                    "author": {
+                        "name": "ARK Modding Community User Roles",
+                        "icon_url": "https://cdn.discordapp.com/icons/153690873186484224/a_8779605d73f4fb1b78f944417c0d4e74.png"
+                    },
+                    "fields": [
+                        {
+                            "name": "Interest/Skill Roles",
+                            "value": ":one: - <@&190385081523765248>\n:two: - <@&190385107297632257>\n:three: - <@&273098929204363266>\n:four: - <@&190385135181496321>\n:five: - <@&258721938774425601>\n:six: - <@&281830584249090048>\n:seven: - <@&521746832578183170>",
+                            "inline": true
+                        },
+                        {
+                            "name": "Activity/Event Roles",
+                            "value": "<a:ark_modding_anim:586765622512320516> - <@&770207045357797378>\nA user- driven community activity where people can seek assistance and help others via voice/text chat and screen sharing.\n<a:twitch:876090679086948383> - <@&877424109460529172>\nAnnounces when a <@&633753028280844290> goes live on Twitch! _Currently this is limited to the Official ARK account._",
+                            "inline": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "terms",
+            "channel_id": 769017646259109908,
+            "embeds": [
+                {
+                    "title": "__Terms & Conditions__ | :warning:",
+                    "description": "​\nIn the spirit of protecting this community from harm financially, legally or otherwise, it is the opinion of <@&322496447687819264> that certain channels in this community be subject to extra measures and not be free and open like they normally would.\n\nNote:\n:small_orange_diamond: __**Server**__ refers to this unofficial and community-run Discord server.\n:small_orange_diamond: __**Staff**__ refers to users with the <@&322496447687819264> role and are responsible for the **Server**.\n:small_orange_diamond: __**Wildcard**__ refers to users with the <@&154069682457018368> role and are here with observer status.\n:small_orange_diamond: __**Author**__ refers to the developer of any published mod, Steam or otherwise.\n\nUpon accepting **ANY** of the below Terms & Conditions, you hereby also agree to the following:\n\n:small_blue_diamond: You agree to fully indemnify, hold faultless and defend **Staff** and **Wildcard**, from any liabilities, legal proceedings or mediations and their outcomes should they arise or result from your activity.\n​",
+                    "color": 1093364,
+                    "type": "rich",
+                    "author": {
+                        "name": "ARK Modding Community",
+                        "icon_url": "https://cdn.discordapp.com/icons/153690873186484224/a_8779605d73f4fb1b78f944417c0d4e74.png"
+                    },
+                    "fields": [
+                        {
+                            "name": "__Jobs Board__ | :clipboard:",
+                            "value": "​\n:small_blue_diamond: All contract terms, including compensation arrangements, must be discussed in private direct-messages only. Any such discussion will be removed from the chat channels.\n:small_blue_diamond: **Staff** will not mediate any contractual disputes between members.  You enter into agreements at your own risk.\n\nIf you accept and agree to the above, click below on the :clipboard: to receive access to <#481952404829503538>.\n​",
+                            "inline": false
+                        },
+                        {
+                            "name": "__C++ Channels__ | <:cpp:770165093865619477>",
+                            "value": "​\n:small_blue_diamond: You accept that **Wildcard** will not endorse or provide any form of assistance or support for mods not created using the ARK Editor.\n:small_blue_diamond: You agree to immediately report to **Staff** any potentially abusive, malicious or nefarious code as soon as you are aware of it.\n:small_blue_diamond: You agree to, at all times, conduct yourself in the highest manner possible and develop your work in good faith. \n:small_blue_diamond: You accept that willful disregard of an **Author's** reasonable wishes as they pertain to the integrity of their work, except where such disregard is in service of the public good against a bad actor, can result in loss of privileges or removal from the **Server**.\n\nIf you accept and agree to the above, click below on the <:cpp:770165093865619477> to receive access to <#642066881733459972>.",
+                            "inline": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "greetings",
+            "channel_id": 823616016584146955,
+            "embeds": [
+                {
+                    "color": 1093364,
+                    "type": "rich",
+                    "author": {
+                        "name": "Welcome to the ARK Modding Community!",
+                        "icon_url": "https://cdn.discordapp.com/icons/153690873186484224/a_8779605d73f4fb1b78f944417c0d4e74.png"
+                    },
+                    "footer": {
+                        "text": "-ARK Modding Community Staff",
+                        "icon_url": "https://cdn.discordapp.com/icons/153690873186484224/a_8779605d73f4fb1b78f944417c0d4e74.png"
+                    },
+                    "fields": [
+                        {
+                            "name": "Before you jump in...",
+                            "value": "If this is your first time here, there are a few general details to get out of the way before you get started. We ask that you familiarise yourself with the <#154057808696967188> for our community. We run a fairly tight ship here, channels are pretty narrow in their scope because their topics are quite large.",
+                            "inline": false
+                        },
+                        {
+                            "name": "Not comfortable with English?",
+                            "value": "While this is largely an English-speaking community, and that will be the best chance at getting your questions answered, we do have channels available for <#193465677242171393>, <#193465709508952067> and <#634036984834424843> speakers. For all other languages we have <#401615605997895681>.",
+                            "inline": false
+                        },
+                        {
+                            "name": "Joined with the wrong account?",
+                            "value": "If you joined our server with the wrong account, please leave this server then sign into the correct account before going through the joining process again - you will not need to re-verify.",
+                            "inline": false
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

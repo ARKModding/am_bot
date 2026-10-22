@@ -4,6 +4,7 @@ import discord
 from discord.ext.commands import Bot
 
 from .cogs.greetings import GreetingsCog
+from .cogs.information import InformationCog
 from .cogs.invite_response import InviteResponseCog
 from .cogs.quarantine import QuarantineCog
 from .cogs.responses import ResponsesCog
@@ -51,6 +52,7 @@ class ARKBot(Bot):
 
     async def add_cogs(self):
         await self.add_cog(GreetingsCog())
+        await self.add_cog(InformationCog(self))
         await self.add_cog(InviteResponseCog(self))
         await self.add_cog(QuarantineCog(self))
         await self.add_cog(ResponsesCog(self))

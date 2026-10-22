@@ -102,8 +102,8 @@ class TestARKBot:
         ) as mock_add_cog:
             await bot.add_cogs()
 
-            # Should add 7 cogs
-            assert mock_add_cog.call_count == 7
+            # Should add 8 cogs
+            assert mock_add_cog.call_count == 8
 
             # Get the cog classes that were added
             cog_types = [
@@ -112,6 +112,7 @@ class TestARKBot:
             ]
 
             assert "GreetingsCog" in cog_types
+            assert "InformationCog" in cog_types
             assert "InviteResponseCog" in cog_types
             assert "QuarantineCog" in cog_types
             assert "ResponsesCog" in cog_types
